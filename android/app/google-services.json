@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "22733820659",
+    "firebase_url": "https://netten-258f8.firebaseio.com",
+    "project_id": "netten-258f8",
+    "storage_bucket": "netten-258f8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:22733820659:android:381a660a301ab1def15d86",
+        "android_client_info": {
+          "package_name": "com.monkeyred.netten"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "22733820659-c01g329pism0robudru2hle0vca33431.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.monkeyred.netten",
+            "certificate_hash": "78c6a5aec1646f8ba53a093cb21909a6b669f52a"
+          }
+        },
+        {
+          "client_id": "22733820659-jt5o01ive3937t8dvuu5nph1kapojfns.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCu0Urth32Gxnjn0fDfz9fevFva1LqcFrw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "22733820659-jt5o01ive3937t8dvuu5nph1kapojfns.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
