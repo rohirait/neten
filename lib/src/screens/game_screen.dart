@@ -345,7 +345,7 @@ class Add extends State<AddGame> {
 
   void sendForm() async {
     DocumentReference ref = await databaseReference.collection("scores").add({
-      'data': selectedDate,
+      'date': selectedDate,
       'opponent': dropdownValue,
       'your_score': yourScore,
       'opponent_score': opponentScore,

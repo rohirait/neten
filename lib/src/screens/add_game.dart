@@ -38,6 +38,8 @@ class Add extends State<AddGame> {
   TextEditingController yourScoreController;
 
   void addNewField() {
+    yourScoreController.clear();
+    opponentScoreController.clear();
     sets++;
     if (yourGames.last > opponentGames.last)
       yourScore++;
@@ -47,25 +49,22 @@ class Add extends State<AddGame> {
       opponentScore++;
       yourScore++;
     }
-    Widget scoreRow =
-    Container(
+    Widget scoreRow = Container(
       margin: EdgeInsets.all(8),
-      child:
-      Row(
+      child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Text((max(yourGames.length, opponentGames.length)).toString()+'. ',style: TextStyle(
-                color: Colors.white,
-                fontSize: 22
-            ),),
+            child: Text(
+              (max(yourGames.length, opponentGames.length)).toString() + '. ',
+              style: TextStyle(color: Colors.white, fontSize: 22),
+            ),
           ),
-          Text(yourGames.last.toString() + " : " + opponentGames.last.toString(),
-            style: TextStyle(
-                color: Colors.white,
-                fontSize: 22
-            ),),
+          Text(
+            yourGames.last.toString() + " : " + opponentGames.last.toString(),
+            style: TextStyle(color: Colors.white, fontSize: 22),
+          ),
         ],
       ),
     );
@@ -104,17 +103,14 @@ class Add extends State<AddGame> {
 
   @override
   Widget build(BuildContext context) {
-    final double _width = MediaQuery
-        .of(context)
-        .size
-        .width;
+    final double _width = MediaQuery.of(context).size.width;
     return MaterialApp(
       home: Scaffold(
           extendBodyBehindAppBar: true,
           resizeToAvoidBottomInset: false,
           appBar: appBar(context, 'Add game'),
           body: Stack(children: <Widget>[
-             Container(
+            Container(
                 height: double.infinity,
                 decoration: BoxDecoration(
                     image: DecorationImage(
@@ -122,11 +118,11 @@ class Add extends State<AddGame> {
                         fit: BoxFit.cover)),
                 child: new SingleChildScrollView(
                   child: user != null
-                      ?  Form(
-                    key: _formKey,
-                    autovalidateMode: AutovalidateMode.always,
-                    child: FormUI(_width),
-                  )
+                      ? Form(
+                          key: _formKey,
+                          autovalidate: _autoValidate,
+                          child: FormUI(_width),
+                        )
                       : Text('Loading...'),
                 )),
           ])),
@@ -138,8 +134,8 @@ class Add extends State<AddGame> {
       mainAxisSize: MainAxisSize.max,
       children: [
         Container(
-          margin:  EdgeInsets.all(15.0),
-          child:  Column(
+          margin: EdgeInsets.all(15.0),
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               SizedBox(height: AppBar().preferredSize.height + 20),
@@ -148,47 +144,50 @@ class Add extends State<AddGame> {
               SizedBox(height: 10),
               buildSets(),
               SizedBox(height: 10),
-              Opacity(
-                opacity: 0.5,
-                child: Container(
-                  color: Color(0xFF00A6FF),
-                  child: Column(
-                    children: [
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text('Games: ',
+              Container(
+                color: Color(0xFF00A6FF).withOpacity(0.5),
+                child: Column(
+                  children: [
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text('Games: ',
+                            style: TextStyle(
+                              fontSize: 20.0, // insert your font size here
+                            )),
+                      ),
+                    ),
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Text('You',
                               style: TextStyle(
-                                fontSize: 20.0, // insert your font size here
+                                fontSize: 16.0, // insert your font size here
                               )),
-                        ),
-                      ),
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Text('You', style: TextStyle(
-                              fontSize: 16.0, // insert your font size here
-                            )),
-                            Text('Opponent', style: TextStyle(
-                              fontSize: 16.0, // insert your font size here
-                            )),
-                          ]),
-                      Column(
-                        children: List.generate(_phoneWidgets.length, (i) {
-                          return _phoneWidgets[i];
-                        }),
-                      ),
-                      buildGame(),
-                      ElevatedButton(
-                        onPressed: addNewField,
-                        child: Text("Add game"),
-                      ),
-                    ],
-                  ),
+                          Text('Opponent',
+                              style: TextStyle(
+                                fontSize: 16.0, // insert your font size here
+                              )),
+                        ]),
+                    Column(
+                      children: List.generate(_phoneWidgets.length, (i) {
+                        return _phoneWidgets[i];
+                      }),
+                    ),
+                    buildGame(),
+                    ElevatedButton(
+                      onPressed: (){
+                        if(yourScoreController.text != ''&& opponentScoreController.text != ''){
+                          addNewField();
+                        }
+                      },
+                      child: Text('Add game'),
+                    ),
+                  ],
                 ),
               ),
-              SizedBox(height:60),
+              SizedBox(height: 60),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: ButtonTheme(
@@ -196,11 +195,10 @@ class Add extends State<AddGame> {
                   height: 60.0,
                   child: ElevatedButton(
                     onPressed: _validateInputs,
-                    child: Text("Save Match"),
+                    child: Text('Save match'),
                   ),
                 ),
               ),
-
             ],
           ),
         ),
@@ -212,9 +210,11 @@ class Add extends State<AddGame> {
     return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
       Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Text((max(yourGames.length,opponentGames.length)+1).toString(), style: TextStyle(
-          fontSize: 16.0, // insert your font size here
-        )),
+        child:
+            Text((max(yourGames.length, opponentGames.length) + 1).toString(),
+                style: TextStyle(
+                  fontSize: 16.0, // insert your font size here
+                )),
       ),
       SizedBox(
         width: 50,
@@ -227,14 +227,12 @@ class Add extends State<AddGame> {
           onSubmitted: (String value) {
             addGameValues(true, value);
           },
-          onChanged: (String value){
-            addGameValues(true, value);
-          },
         ),
       ),
-      Text(' : ',style: TextStyle(
-        fontSize: 16.0, // insert your font size here
-      )),
+      Text(' : ',
+          style: TextStyle(
+            fontSize: 16.0, // insert your font size here
+          )),
       SizedBox(
         width: 50,
         child: new TextField(
@@ -246,8 +244,8 @@ class Add extends State<AddGame> {
           onSubmitted: (String value) {
             addGameValues(false, value);
           },
-          onChanged: (String value){
-            addGameValues(true, value);
+          onChanged: (String value) {
+            addGameValues(false, value);
           },
         ),
       ),
@@ -258,7 +256,7 @@ class Add extends State<AddGame> {
     List<int> games = isYourScore ? yourGames : opponentGames;
     List<int> otherGames = isYourScore ? opponentGames : yourGames;
     TextEditingController controller =
-    isYourScore ? opponentScoreController : yourScoreController;
+        isYourScore ? opponentScoreController : yourScoreController;
 
     if (games.length <= sets) {
       games.add(int.parse(value));
@@ -270,17 +268,15 @@ class Add extends State<AddGame> {
       otherGames.add(int.parse(controller.text));
     }
 
-    if (yourGames.length == opponentGames.length) {
-      yourScoreController.clear();
-      opponentScoreController.clear();
-    }
+    // if (yourGames.length == opponentGames.length) {
+    //   yourScoreController.clear();
+    //   opponentScoreController.clear();
+    // }
   }
 
   Widget buildSets() {
-    return Opacity(
-      opacity: 0.5,
-      child: Container(
-        color: Color(0xFF00A6FF),
+    return  Container(
+        color: Color(0xFF00A6FF).withOpacity(0.5),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -295,60 +291,56 @@ class Add extends State<AddGame> {
                 style: TextStyle(
                   fontSize: 20.0, // insert your font size here
                 )),
-
           ],
         ),
-      ),
     );
   }
 
   Widget buildOpponentDropdown() {
-    return Opacity(
-      opacity: 0.5,
-      child: Container(
-        color: Color(0xFF00A6FF),
+    return  Container(
+        color: Color(0xFF00A6FF).withOpacity(0.5),
         child: Row(
-            children: [
+          children: [
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Text('Opponent', style: TextStyle(
-          fontSize: 20.0, // insert your font size here
-        )),
+              child: Text('Opponent',
+                  style: TextStyle(
+                    fontSize: 20.0, // insert your font size here
+                  )),
             ),
-      Spacer(),
-      StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance
-              .collection('friends')
-              .where('email', isEqualTo: user.email)
-              .snapshots(),
-          builder: (context, snapshot) {
-            if (snapshot.data == null) return Text('Loading...');
-            return DropdownButton<String>(
-              value: dropdownValue,
-              icon: Icon(Icons.arrow_downward),
-              iconSize: 24,
-              elevation: 16,
-              onChanged: (String newValue) {
-                setState(() {
-                  dropdownValue = newValue;
-                });
-              },
-              items: snapshot.data.docs.map((DocumentSnapshot document) {
-                return DropdownMenuItem<String>(
-                    value: document.get('friend_name'),
-                    child: new Container(
-                      decoration: new BoxDecoration(
-                          borderRadius: new BorderRadius.circular(5.0)),
-                      padding: EdgeInsets.fromLTRB(10.0, 2.0, 10.0, 0.0),
-                      //color: primaryColor,
-                      child: new Text(document.get('friend_name')),
-                    ));
-              }).toList(),
-            );
-          }),
-      ],
-    ),)
-    ,
+            Spacer(),
+            StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('friends')
+                    .where('email', isEqualTo: user.email)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.data == null) return Text('Loading...');
+                  return DropdownButton<String>(
+                    value: dropdownValue,
+                    icon: Icon(Icons.arrow_downward),
+                    iconSize: 24,
+                    elevation: 16,
+                    onChanged: (String newValue) {
+                      setState(() {
+                        dropdownValue = newValue;
+                      });
+                    },
+                    items: snapshot.data.docs.map((DocumentSnapshot document) {
+                      return DropdownMenuItem<String>(
+                          value: document.get('friend_name'),
+                          child: new Container(
+                            decoration: new BoxDecoration(
+                                borderRadius: new BorderRadius.circular(5.0)),
+                            padding: EdgeInsets.fromLTRB(10.0, 2.0, 10.0, 0.0),
+                            //color: primaryColor,
+                            child: new Text(document.get('friend_name')),
+                          ));
+                    }).toList(),
+                  );
+                }),
+          ],
+        ),
     );
   }
 
@@ -384,17 +376,81 @@ class Add extends State<AddGame> {
   }
 
   void _validateInputs() {
-    if (_formKey.currentState.validate()) {
+    if (_formKey.currentState.validate() && dropdownValue != null) {
 //    If all data are correct then save data to out variables
       _formKey.currentState.save();
-      sendForm();
-      Navigator.pop(context);
+      confirmDialog();
     } else {
 //    If all data are not valid then start auto validation.
-      setState(() {
-        _autoValidate = true;
-      });
+      String error = currentSetsString ==  "0 : 0" ? 'Add games' : 'Add opponent' ;
+      showError(error);
+      // setState(() {
+      //   _autoValidate = true;
+      // });
     }
+  }
+
+  Future<void> showError(String error) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title:  Text('Missing info'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children:  <Widget>[
+                Text(error)
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> confirmDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title:  Text('Confirm'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children:  <Widget>[
+                Text('Would you like to add this match?')
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('No'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Yes'),
+              onPressed: () {
+                sendForm();
+                Navigator.pop(context);
+                Navigator.pop(context);
+              },
+
+            ),
+          ],
+        );
+      },
+    );
   }
 
   String validateEmail(String value) {
@@ -413,7 +469,8 @@ class Add extends State<AddGame> {
       'opponent': dropdownValue,
       'your_score': yourScore,
       'opponent_score': opponentScore,
-      'you': user.email
+      'you': user.email,
+      'created': FieldValue.serverTimestamp()
     });
     print(ref.documentID);
   }

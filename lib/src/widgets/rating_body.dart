@@ -144,11 +144,11 @@ Column gameColumn(DocumentSnapshot opponent) {
               )),
         ],
       ),
-      Text(opponent.data().containsKey('data') ? readTimestamp(opponent['data'].toDate()) : "")
+      Text(opponent.data().containsKey('date') ? readTimestamp(opponent['date'].toDate()) : '')
     ],
   );
 }
 
 String readTimestamp(DateTime timestamp) {
-  return DateFormat('dd:MM:yy kk:mm').format(timestamp);
+  return DateFormat('dd:MM:yy').format(timestamp);
 }
