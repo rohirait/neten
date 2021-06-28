@@ -2,7 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:netten/src/models/friend.dart';
+import 'package:netten/src/models/score.dart';
 import 'package:netten/src/screens/add_friends.dart';
+import 'package:netten/src/widgets/rating_body.dart';
 
 import 'add_game.dart';
 
@@ -82,7 +84,7 @@ class FriendScreenState extends State<FriendScreen> {
         stream: FirebaseFirestore.instance
             .collection('scores')
             .where('you', isEqualTo: email)
-            .where("opponent", whereIn: [name, friendEmail])
+            .where("opponent", whereIn: [name, friendEmail]).orderBy('date', descending: true)
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.data == null) return Text('Loading...');
@@ -93,6 +95,7 @@ class FriendScreenState extends State<FriendScreen> {
               itemCount: snapshot.data.documents.length,
               itemBuilder: (context, index) {
                 DocumentSnapshot game = snapshot.data.documents[index];
+                Score score = Score.fromSnapshot(snapshot.data.documents[index]);
                 return Container(
                   decoration: new BoxDecoration(
                       color: Color(0xFF00A6FF).withOpacity(
@@ -106,41 +109,7 @@ class FriendScreenState extends State<FriendScreen> {
                         bottom: 10.0,
                         left: 8.0,
                         right: 8.0),
-                    child: Column(
-                      children: [
-                        Text(
-                            game['opponent'] != null
-                                ? game['opponent']
-                                : "Unknown ",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize:
-                              20.0, // insert your font size here
-                            )),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          //Center Row contents horizontally,
-                          crossAxisAlignment:
-                          CrossAxisAlignment.center,
-                          children: [
-                            Text( game.exists ? game['your_score'].toString() : "",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize:
-                                  20.0, // insert your font size here
-                                )),
-                            Text(
-                                ' : ' +
-                                    (game.exists ? game['opponent_score'].toString(): ""),
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize:
-                                  20.0, // insert your font size here
-                                )),
-                          ],
-                        ),
-                      ],
-                    ),
+                    child: GameColumn(score:score)
                   ),
                 );
               });
@@ -275,7 +244,7 @@ class FriendScreenState extends State<FriendScreen> {
     return FirebaseFirestore.instance
         .collection('scores')
         .where('you', isEqualTo: user.email)
-        .where("opponent", arrayContainsAny: [_name, _email])
+        .where("opponent", arrayContainsAny: [_name, _email]).orderBy('date', descending: true)
         .snapshots();
   }
 

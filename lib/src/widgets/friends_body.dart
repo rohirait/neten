@@ -41,7 +41,7 @@ Widget friendBody(BuildContext context, User user) {
           children: [
             SizedBox(height: AppBar().preferredSize.height + 20),
             StreamBuilder(
-                stream: Firestore.instance
+                stream: FirebaseFirestore.instance
                     .collection('friend_request')
                     .where('recipient_email', isEqualTo: user.email)
                     .where('status', isEqualTo: "PENDING")
@@ -50,72 +50,69 @@ Widget friendBody(BuildContext context, User user) {
                   if (snapshot.data == null)
                     return CircularProgressIndicator();
                   else if (snapshot.data.documents.length > 0) {
-                    return Flexible(
-                      fit: FlexFit.loose,
-                      child: ListView.builder(
-                          padding: const EdgeInsets.all(0),
-                          shrinkWrap: true,
-                          itemCount: snapshot.data.documents.length,
-                          itemBuilder: (context, index) {
-                            DocumentSnapshot friend =
-                                snapshot.data.documents[index];
-                            return Container(
-                              decoration: new BoxDecoration(
-                                  color: Color(0xFF00A6FF).withOpacity(
-                                      0.5) // Specifies the background color and the opacity
-                                  ),
-                              margin: EdgeInsets.only(right: 20.0, left: 20.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 4.0,
-                                        bottom: 4.0,
-                                        left: 8.0,
-                                        right: 8.0),
-                                    child: Text(friend['sender_name'],
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          fontSize:
-                                              20.0, // insert your font size here
-                                        )),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(10.0),
-                                    child: ButtonTheme(
-                                      buttonColor: Colors.green,
-                                      height: 60.0,
-                                      child: RaisedButton(
-                                        color: Colors.green,
-                                        onPressed: () async {
-                                          _addFriend(
-                                              friend.id,
-                                              friend['sender_name'],
-                                              friend['email']);
-                                        },
-                                        child: Text("Add"),
-                                      ),
+                    return ListView.builder(
+                        padding: const EdgeInsets.all(0),
+                        shrinkWrap: true,
+                        itemCount: snapshot.data.documents.length,
+                        itemBuilder: (context, index) {
+                          DocumentSnapshot friend =
+                              snapshot.data.documents[index];
+                          return Container(
+                            decoration: new BoxDecoration(
+                                color: Color(0xFF00A6FF).withOpacity(
+                                    0.5) // Specifies the background color and the opacity
+                                ),
+                            margin: EdgeInsets.only(right: 20.0, left: 20.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      top: 4.0,
+                                      bottom: 4.0,
+                                      left: 8.0,
+                                      right: 8.0),
+                                  child: Text(friend['sender_name'],
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize:
+                                            20.0, // insert your font size here
+                                      )),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: ButtonTheme(
+                                    buttonColor: Colors.green,
+                                    height: 60.0,
+                                    child: RaisedButton(
+                                      color: Colors.green,
+                                      onPressed: () async {
+                                        _addFriend(
+                                            friend.id,
+                                            friend['sender_name'],
+                                            friend['email']);
+                                      },
+                                      child: Text("Add"),
                                     ),
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(10.0),
-                                    child: ButtonTheme(
-                                      height: 60.0,
-                                      child: RaisedButton(
-                                        color: Colors.red,
-                                        onPressed: () async {
-                                          _deleteRequest(friend.documentID);
-                                        },
-                                        child: Text("Delete"),
-                                      ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: ButtonTheme(
+                                    height: 60.0,
+                                    child: RaisedButton(
+                                      color: Colors.red,
+                                      onPressed: () async {
+                                        _deleteRequest(friend.documentID);
+                                      },
+                                      child: Text("Delete"),
                                     ),
                                   ),
-                                ],
-                              ),
-                            );
-                          }),
-                    );
+                                ),
+                              ],
+                            ),
+                          );
+                        });
                   }
                   return Visibility(
                     child: Text("Gone"),
@@ -124,45 +121,42 @@ Widget friendBody(BuildContext context, User user) {
                 }),
             Expanded(
               child: StreamBuilder(
-                  stream: Firestore.instance
+                  stream: FirebaseFirestore.instance
                       .collection('friends')
                       .where('email', isEqualTo: user.email)
                       .snapshots(),
                   builder: (context, snapshot) {
                     if (snapshot.data == null)
                       return new CircularProgressIndicator();
-                    return Flexible(
-                      fit: FlexFit.loose,
-                      child: ListView.builder(
-                          padding: const EdgeInsets.all(8),
-                          itemCount: snapshot.data.documents.length,
-                          itemBuilder: (context, index) {
-                            DocumentSnapshot friend =
-                                snapshot.data.documents[index];
-                            return ElevatedButton(
-                              onPressed: () {
-                                Friend clicked = new Friend(
-                                    name: friend['friend_name'],
-                                    email: friend['friend_email'],
-                                    uid: friend.id);
+                    return ListView.builder(
+                        padding: const EdgeInsets.all(8),
+                        itemCount: snapshot.data.documents.length,
+                        itemBuilder: (context, index) {
+                          DocumentSnapshot friend =
+                              snapshot.data.documents[index];
+                          return ElevatedButton(
+                            onPressed: () {
+                              Friend clicked = new Friend(
+                                  name: friend['friend_name'],
+                                  email: friend['friend_email'],
+                                  uid: friend.id);
 
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          FriendScreen(friend: clicked),
-                                    ));
-                              },
-                              child: Text(
-                                friend['friend_name'],
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 20.0, // insert your font size here
-                                ),
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        FriendScreen(friend: clicked),
+                                  ));
+                            },
+                            child: Text(
+                              friend['friend_name'],
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 20.0, // insert your font size here
                               ),
-                            );
-                          }),
-                    );
+                            ),
+                          );
+                        });
                   }),
             ),
           ],

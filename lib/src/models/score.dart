@@ -1,10 +1,42 @@
-class Score {
-  final int opponentScore;
-  final int yourScore;
-  final String uid;
-  final String opponent;
-  final String date;
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
-  Score(this.date, {this.opponentScore, this.yourScore, this.uid, this.opponent});
+import 'firebase_convertable.dart';
 
+class Score implements FirebaseConverter<Score> {
+  int opponentScore;
+  int yourScore;
+  String uid;
+  String opponent;
+  String date;
+
+  Score.fromMap(Map<String, dynamic> data)
+      : opponentScore = data['opponent_score'] ?? '',
+        yourScore = data['your_score'] ?? '',
+        uid = data['uid'] ?? '',
+        opponent = data['opponent'] ?? '',
+        date = data['date'] ?? '';
+
+  Score.fromSnapshot(DocumentSnapshot data)
+      : uid = data.reference.id,
+        opponentScore = data.data()['opponent_score'] ?? '',
+        yourScore = data.data()['your_score'] ?? '',
+        opponent = data.data()['opponent'] ?? '',
+        date = data.data()['date'] != null ? readTimestamp(data.data()['date'].toDate()) : '';
+
+  @override
+  String id;
+
+  @override
+  Score parseFromMap(Map<String, dynamic> snapshot, String id) {
+    return Score.fromMap(snapshot);
+  }
+
+  @override
+  Map<String, dynamic> toJson() =>
+      {'opponent_score': opponentScore, 'your_score': yourScore, 'uid': uid, 'opponent': opponent, 'date': date};
+
+  static String readTimestamp(DateTime timestamp) {
+    return DateFormat('dd:MM:yy').format(timestamp);
+  }
 }

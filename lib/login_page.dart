@@ -25,7 +25,7 @@ class _LoginPageState extends State<LoginPage> {
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Text('NetteN',
+              Text('NeteN',
                   style: TextStyle(
                     fontSize: 100,
                     color: Color(0xFF47525E),
