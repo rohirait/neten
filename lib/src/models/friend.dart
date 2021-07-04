@@ -20,7 +20,15 @@ class Friend {
   Map<String, dynamic> toMap(){
     return {
       'name': name,
-      'email': email
+      'email': email,
+      'uid':uid
     };
+  }
+
+  @override
+  bool operator ==(other) {
+    return (other is Friend)
+        && other.name == name
+        && other.email == email && other.uid == uid;
   }
 }

@@ -9,7 +9,7 @@ class Score implements FirebaseConverter<Score> {
   String uid;
   String opponent;
   String date;
-
+  Score({this.opponentScore, this.yourScore, this.uid, this.opponent, this.date});
   Score.fromMap(Map<String, dynamic> data)
       : opponentScore = data['opponent_score'] ?? '',
         yourScore = data['your_score'] ?? '',

@@ -4,11 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:netten/src/models/friend.dart';
 import 'package:netten/src/widgets/app_bar.dart';
 import 'dart:math';
 
 class AddGame extends StatefulWidget {
-  final String name;
+  final Friend name;
   final TextEditingController yourScoreController = TextEditingController();
   final TextEditingController opponentScoreController = TextEditingController();
 
@@ -36,6 +37,8 @@ class Add extends State<AddGame> {
   String currentSetsString = "0 : 0";
   TextEditingController opponentScoreController;
   TextEditingController yourScoreController;
+  bool selected = false;
+  List<DropdownMenuItem<Friend>> friends = [];
 
   void addNewField() {
     yourScoreController.clear();
@@ -76,7 +79,7 @@ class Add extends State<AddGame> {
   @override
   void initState() {
     super.initState();
-    this.dropdownValue = widget.name;
+    this.dropdownValue = widget.name ?? null;
     this.opponentScoreController = widget.opponentScoreController;
     this.yourScoreController = widget.yourScoreController;
     _loadCurrentUser();
@@ -177,8 +180,9 @@ class Add extends State<AddGame> {
                     ),
                     buildGame(),
                     ElevatedButton(
-                      onPressed: (){
-                        if(yourScoreController.text != ''&& opponentScoreController.text != ''){
+                      onPressed: () {
+                        if (yourScoreController.text != '' &&
+                            opponentScoreController.text != '') {
                           addNewField();
                         }
                       },
@@ -275,72 +279,106 @@ class Add extends State<AddGame> {
   }
 
   Widget buildSets() {
-    return  Container(
-        color: Color(0xFF00A6FF).withOpacity(0.5),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text('Sets: ',
-                  style: TextStyle(
-                    fontSize: 20.0, // insert your font size here
-                  )),
-            ),
-            Text(currentSetsString,
+    return Container(
+      color: Color(0xFF00A6FF).withOpacity(0.5),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text('Sets: ',
                 style: TextStyle(
                   fontSize: 20.0, // insert your font size here
                 )),
-          ],
-        ),
+          ),
+          Text(currentSetsString,
+              style: TextStyle(
+                fontSize: 20.0, // insert your font size here
+              )),
+        ],
+      ),
     );
   }
 
   Widget buildOpponentDropdown() {
-    return  Container(
-        color: Color(0xFF00A6FF).withOpacity(0.5),
-        child: Row(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text('Opponent',
-                  style: TextStyle(
-                    fontSize: 20.0, // insert your font size here
-                  )),
-            ),
-            Spacer(),
-            StreamBuilder<QuerySnapshot>(
-                stream: FirebaseFirestore.instance
-                    .collection('friends')
-                    .where('email', isEqualTo: user.email)
-                    .snapshots(),
-                builder: (context, snapshot) {
-                  if (snapshot.data == null) return Text('Loading...');
-                  return DropdownButton<String>(
-                    value: dropdownValue,
-                    icon: Icon(Icons.arrow_downward),
-                    iconSize: 24,
-                    elevation: 16,
-                    onChanged: (String newValue) {
-                      setState(() {
-                        dropdownValue = newValue;
-                      });
-                    },
-                    items: snapshot.data.docs.map((DocumentSnapshot document) {
-                      return DropdownMenuItem<String>(
-                          value: document.get('friend_name'),
-                          child: new Container(
-                            decoration: new BoxDecoration(
-                                borderRadius: new BorderRadius.circular(5.0)),
-                            padding: EdgeInsets.fromLTRB(10.0, 2.0, 10.0, 0.0),
-                            //color: primaryColor,
-                            child: new Text(document.get('friend_name')),
-                          ));
-                    }).toList(),
-                  );
-                }),
-          ],
-        ),
+    return Container(
+      color: Color(0xFF00A6FF).withOpacity(0.5),
+      child: Row(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text('Opponent',
+                style: TextStyle(
+                  fontSize: 20.0, // insert your font size here
+                )),
+          ),
+          Spacer(),
+          if (friends.length == 0) FutureBuilder<QuerySnapshot>(
+                  future: FirebaseFirestore.instance
+                      .collection('friends')
+                      .where('email', isEqualTo: user.email)
+                      .get(),
+                  builder: (context, snapshot) {
+                    if (snapshot.data == null) return Text('Loading...');
+                    return DropdownButton<Friend>(
+                      value: selected ? dropdownValue : null,
+                      icon: Icon(Icons.arrow_downward),
+                      iconSize: 24,
+                      elevation: 16,
+                      onChanged: (Friend newValue) {
+                        setState(() {
+                          selected = true;
+                          dropdownValue = newValue;
+                        });
+                      },
+                      items: friends.length > 0
+                          ? friends
+                          : snapshot.data.docs.map((DocumentSnapshot document) {
+                              friends.add(DropdownMenuItem<Friend>(
+                                  value: Friend(
+                                      name: document.get('friend_name'),
+                                      email: document.get('friend_email'),
+                                      uid: document.id),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(5.0)),
+                                    padding: EdgeInsets.fromLTRB(
+                                        10.0, 2.0, 10.0, 0.0),
+                                    //color: primaryColor,
+                                    child: Text(document.get('friend_name')),
+                                  )));
+                              return DropdownMenuItem<Friend>(
+                                  value: Friend(
+                                      name: document.get('friend_name'),
+                                      email: document.get('friend_email'),
+                                      uid: document.id),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(5.0)),
+                                    padding: EdgeInsets.fromLTRB(
+                                        10.0, 2.0, 10.0, 0.0),
+                                    //color: primaryColor,
+                                    child: Text(document.get('friend_name')),
+                                  ));
+                            }).toList(),
+                    );
+                  })
+          else DropdownButton<Friend>(
+                  value: dropdownValue,
+                  icon: Icon(Icons.arrow_downward),
+                  iconSize: 24,
+                  elevation: 16,
+                  onChanged: (Friend newValue) {
+                    setState(() {
+                      selected = true;
+                      dropdownValue = newValue;
+                    });
+                  },
+                  items: friends)
+        ],
+      ),
     );
   }
 
@@ -382,7 +420,8 @@ class Add extends State<AddGame> {
       confirmDialog();
     } else {
 //    If all data are not valid then start auto validation.
-      String error = currentSetsString ==  "0 : 0" ? 'Add games' : 'Add opponent' ;
+      String error =
+          currentSetsString == "0 : 0" ? 'Add games' : 'Add opponent';
       showError(error);
       // setState(() {
       //   _autoValidate = true;
@@ -396,12 +435,10 @@ class Add extends State<AddGame> {
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          title:  Text('Missing info'),
+          title: Text('Missing info'),
           content: SingleChildScrollView(
             child: ListBody(
-              children:  <Widget>[
-                Text(error)
-              ],
+              children: <Widget>[Text(error)],
             ),
           ),
           actions: <Widget>[
@@ -423,12 +460,10 @@ class Add extends State<AddGame> {
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          title:  Text('Confirm'),
+          title: Text('Confirm'),
           content: SingleChildScrollView(
             child: ListBody(
-              children:  <Widget>[
-                Text('Would you like to add this match?')
-              ],
+              children: <Widget>[Text('Would you like to add this match?')],
             ),
           ),
           actions: <Widget>[
@@ -445,7 +480,6 @@ class Add extends State<AddGame> {
                 Navigator.pop(context);
                 Navigator.pop(context);
               },
-
             ),
           ],
         );
@@ -466,11 +500,21 @@ class Add extends State<AddGame> {
   void sendForm() async {
     DocumentReference ref = await databaseReference.collection("scores").add({
       'date': selectedDate,
-      'opponent': dropdownValue,
+      'opponent': dropdownValue.name,
       'your_score': yourScore,
       'opponent_score': opponentScore,
       'you': user.email,
       'created': FieldValue.serverTimestamp()
+    });
+    DocumentReference ref2 =
+        await databaseReference.collection("score_request").add({
+      'date': selectedDate,
+      'opponent': user.email,
+      'your_score': opponentScore,
+      'opponent_score': yourScore,
+      'you': dropdownValue.email,
+      'created': FieldValue.serverTimestamp(),
+          'accepted':'PENDING'
     });
     print(ref.documentID);
   }

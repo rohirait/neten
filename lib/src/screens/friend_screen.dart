@@ -186,7 +186,7 @@ class FriendScreenState extends State<FriendScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => AddGame(name: friend.name)),
+                builder: (context) => AddGame(name: friend)),
           );
         },
         child: Text("Add Game"));
