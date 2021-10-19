@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:netten/src/models/friend.dart';
 import 'package:netten/src/screens/add_friends.dart';
 import 'package:netten/src/screens/friend_screen.dart';
+import 'package:sqflite/sqflite.dart';
 
 Widget friendBody(BuildContext context, User user) {
   final databaseReference = Firestore.instance;
@@ -41,11 +42,7 @@ Widget friendBody(BuildContext context, User user) {
           children: [
             SizedBox(height: AppBar().preferredSize.height + 20),
             StreamBuilder(
-                stream: FirebaseFirestore.instance
-                    .collection('friend_request')
-                    .where('recipient_email', isEqualTo: user.email)
-                    .where('status', isEqualTo: "PENDING")
-                    .snapshots(),
+                stream: loadInfo(user),
                 builder: (context, snapshot) {
                   if (snapshot.data == null)
                     return CircularProgressIndicator();
@@ -121,10 +118,7 @@ Widget friendBody(BuildContext context, User user) {
                 }),
             Expanded(
               child: StreamBuilder(
-                  stream: FirebaseFirestore.instance
-                      .collection('friends')
-                      .where('email', isEqualTo: user.email)
-                      .snapshots(),
+                  stream: loadFriends(user),
                   builder: (context, snapshot) {
                     if (snapshot.data == null)
                       return new CircularProgressIndicator();
@@ -134,6 +128,7 @@ Widget friendBody(BuildContext context, User user) {
                         itemBuilder: (context, index) {
                           DocumentSnapshot friend =
                               snapshot.data.documents[index];
+                          addFriendToDB(friend);
                           return ElevatedButton(
                             onPressed: () {
                               Friend clicked = new Friend(
@@ -162,4 +157,28 @@ Widget friendBody(BuildContext context, User user) {
           ],
         ),
       ));
+
+
+}
+
+void addFriendToDB(DocumentSnapshot friend) {
+
+}
+
+Stream<QuerySnapshot> loadInfo(User user)  {
+  return FirebaseFirestore.instance
+      .collection('friend_request')
+      .where('recipient_email', isEqualTo: user.email)
+      .where('status', isEqualTo: "PENDING")
+      .snapshots();
+}
+
+Stream<QuerySnapshot> loadFriends(User user){
+  Stream friends = FirebaseFirestore.instance
+      .collection('friends')
+      .where('email', isEqualTo: user.email)
+      .snapshots();
+
+
+  return friends;
 }

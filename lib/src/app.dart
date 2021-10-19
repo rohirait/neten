@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:netten/src/screens/home_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:sqflite/sqflite.dart';
 
 import '../login_page.dart';
 
@@ -13,6 +14,7 @@ class App extends StatelessWidget {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
+
     return MaterialApp(
         title: 'Flutter Login',
         theme: ThemeData(

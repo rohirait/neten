@@ -9,20 +9,23 @@ class Score implements FirebaseConverter<Score> {
   String uid;
   String opponent;
   String date;
-  Score({this.opponentScore, this.yourScore, this.uid, this.opponent, this.date});
+  String opponentEmail;
+  Score({this.opponentScore, this.yourScore, this.uid, this.opponent, this.date, this.opponentEmail});
   Score.fromMap(Map<String, dynamic> data)
       : opponentScore = data['opponent_score'] ?? '',
         yourScore = data['your_score'] ?? '',
         uid = data['uid'] ?? '',
         opponent = data['opponent'] ?? '',
-        date = data['date'] ?? '';
+        date = data['date'] ?? '',
+        opponentEmail = data['opponent_email'];
 
   Score.fromSnapshot(DocumentSnapshot data)
       : uid = data.reference.id,
         opponentScore = data.data()['opponent_score'] ?? '',
         yourScore = data.data()['your_score'] ?? '',
         opponent = data.data()['opponent'] ?? '',
-        date = data.data()['date'] != null ? readTimestamp(data.data()['date'].toDate()) : '';
+        date = data.data()['date'] != null ? readTimestamp(data.data()['date'].toDate()) : '',
+        opponentEmail = data.data()['opponent_email'] ?? '';
 
   @override
   String id;
@@ -34,7 +37,7 @@ class Score implements FirebaseConverter<Score> {
 
   @override
   Map<String, dynamic> toJson() =>
-      {'opponent_score': opponentScore, 'your_score': yourScore, 'uid': uid, 'opponent': opponent, 'date': date};
+      {'opponent_score': opponentScore, 'your_score': yourScore, 'uid': uid, 'opponent': opponent, 'date': date, 'opponent_email': opponentEmail};
 
   static String readTimestamp(DateTime timestamp) {
     return DateFormat('dd:MM:yy').format(timestamp);

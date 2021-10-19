@@ -23,8 +23,6 @@ class _RatingBodyState extends State<RatingBody> {
     super.initState();
   }
 
-
-
   @override
   Widget build(BuildContext context) {
 
@@ -95,7 +93,7 @@ Widget ratingBody(BuildContext context, User user) {
               stream: FirebaseFirestore.instance
                   .collection('score_request')
                   .where('you', isEqualTo: user.email)
-                  .where('status', isEqualTo: "PENDING")
+                  .where('accepted', isEqualTo: "PENDING")
                   .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.data == null)
@@ -108,65 +106,83 @@ Widget ratingBody(BuildContext context, User user) {
                       itemBuilder: (context, index) {
                         DocumentSnapshot friend =
                         snapshot.data.documents[index];
-                        return Container(
-                          decoration: new BoxDecoration(
-                              color: Color(0xFF00A6FF).withOpacity(
-                                  0.5) // Specifies the background color and the opacity
-                          ),
-                          margin: EdgeInsets.only(right: 20.0, left: 20.0),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    top: 4.0,
-                                    bottom: 4.0,
-                                    left: 8.0,
-                                    right: 8.0),
-                                child: Text("Score submit by: "+friend['opponent'],
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize:
-                                      20.0, // insert your font size here
-                                    )),
-                              ),
-                              Text(friend['your_score'].toString()+' : '+friend['opponent_score'].toString()),
-                              Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(10.0),
-                                    child: ButtonTheme(
-                                      buttonColor: Colors.green,
-                                      height: 60.0,
-                                      child: RaisedButton(
-                                        color: Colors.green,
-                                        onPressed: () async {
-                                          Score score = Score(opponentScore: friend['opponent_score'], opponent: friend['opponent'],
-                                              yourScore: friend['your_score'],date:friend['date'].toDate().toString());
-                                          addScore(score, user, friend.id);
-                                        },
-                                        child: Text("Add"),
-                                      ),
+                        return StreamBuilder(
+                          stream: FirebaseFirestore.instance
+                              .collection('friends')
+                              .where('email', isEqualTo: user.email)
+                              .where('friend_email', isEqualTo: friend['opponent'])
+                              .snapshots(),
+                          builder: (context, snapshot) {
+                            if (snapshot.data == null)
+                              return CircularProgressIndicator();
+                            else if(snapshot.data.documents.length > 0){
+                              DocumentSnapshot friendGame =
+                              snapshot.data.documents[0];
+                              return Container(
+                                decoration: new BoxDecoration(
+                                    color: Color(0xFF00A6FF).withOpacity(
+                                        0.5) // Specifies the background color and the opacity
+                                ),
+                                margin: EdgeInsets.only(right: 20.0, left: 20.0),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          top: 4.0,
+                                          bottom: 4.0,
+                                          left: 8.0,
+                                          right: 8.0),
+                                      child: Text("Score submit by: "+friendGame['friend_name'],
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            fontSize:
+                                            20.0, // insert your font size here
+                                          )),
                                     ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(10.0),
-                                    child: ButtonTheme(
-                                      height: 60.0,
-                                      child: RaisedButton(
-                                        color: Colors.red,
-                                        onPressed: () async {
-                                          _deleteRequest(friend.documentID);
-                                        },
-                                        child: Text("Delete"),
-                                      ),
+                                    Text(friend['your_score'].toString()+' : '+friend['opponent_score'].toString()),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.all(10.0),
+                                          child: ButtonTheme(
+                                            buttonColor: Colors.green,
+                                            height: 60.0,
+                                            child: RaisedButton(
+                                              color: Colors.green,
+                                              onPressed: () async {
+                                                Score score = Score(opponentScore: friend['opponent_score'], opponent: friendGame['friend_name'],
+                                                    yourScore: friend['your_score'],date:friend['date'].toDate().toString(), opponentEmail: friend['opponent']);
+                                                addScore(score, user, friend.id);
+                                              },
+                                              child: Text("Add"),
+                                            ),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.all(10.0),
+                                          child: ButtonTheme(
+                                            height: 60.0,
+                                            child: RaisedButton(
+                                              color: Colors.red,
+                                              onPressed: () async {
+                                                _deleteRequest(friend.documentID);
+                                              },
+                                              child: Text("Delete"),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
+                                  ],
+                                ),
+                              );
+                            } else {
+                              return SizedBox(height: 0);
+                            }
+
+                          }
                         );
                       });
                 }
@@ -213,6 +229,7 @@ void addScore(Score score, User user, String id) async {
  await FirebaseFirestore.instance.collection("scores").add({
     'date': DateTime.parse(score.date),
     'opponent': score.opponent,
+    'opponent_email': score.opponentEmail,
     'your_score': score.yourScore,
     'opponent_score': score.opponentScore,
     'you': user.email,
@@ -221,8 +238,9 @@ void addScore(Score score, User user, String id) async {
 
  FirebaseFirestore.instance.collection("score_request")
      .document(id)
-     .updateData({'status': 'ACCEPTED'}).then((_) {
+     .updateData({'accepted': 'ACCEPTED'}).then((_) {
    print("success!");
+
  });
 
 }
