@@ -237,7 +237,7 @@ class FriendScreenState extends State<FriendScreen> {
   }
 
   Future<void> rejectJob(String jobId) {
-    return Firestore.instance.collection('friends').document(jobId).delete();
+    return FirebaseFirestore.instance.collection('friends').doc(jobId).delete();
   }
 
    getFriendGames(){
@@ -249,9 +249,9 @@ class FriendScreenState extends State<FriendScreen> {
   }
 
   Future<void> saveJob(String jobId) {
-    return Firestore.instance
+    return FirebaseFirestore.instance
         .collection('friends')
-        .document(jobId)
+        .doc(jobId)
         .update({'friend_email': _email, 'friend_name': _name}).then(
       (value) => Navigator.pop(this.context, false),
     );

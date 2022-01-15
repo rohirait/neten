@@ -27,7 +27,7 @@ class Add extends State<AddGame> {
   int yourScore = 0;
   int opponentScore = 0;
   String userEmail;
-  final databaseReference = Firestore.instance;
+  final databaseReference = FirebaseFirestore.instance;
   User user;
   var dropdownValue;
   List<int> yourGames = <int>[];
@@ -123,7 +123,7 @@ class Add extends State<AddGame> {
                   child: user != null
                       ? Form(
                           key: _formKey,
-                          autovalidate: _autoValidate,
+                          autovalidateMode: AutovalidateMode.always,
                           child: FormUI(_width),
                         )
                       : Text('Loading...'),
@@ -516,6 +516,6 @@ class Add extends State<AddGame> {
       'created': FieldValue.serverTimestamp(),
           'accepted':'PENDING'
     });
-    print(ref.documentID);
+    print(ref.id);
   }
 }

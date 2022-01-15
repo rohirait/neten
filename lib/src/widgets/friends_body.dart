@@ -8,18 +8,17 @@ import 'package:netten/src/screens/friend_screen.dart';
 import 'package:sqflite/sqflite.dart';
 
 Widget friendBody(BuildContext context, User user) {
-  final databaseReference = Firestore.instance;
+  final databaseReference = FirebaseFirestore.instance;
   Future _addFriend(index, name, email) async {
-    DocumentReference ref = await databaseReference.collection("friends").add({
+   await databaseReference.collection("friends").add({
       'email': user.email,
       'friend_email': email,
       'friend_name': name,
       'uid': user.uid
     });
 
-    databaseReference.collection("friend_request")
-          .document(index)
-          .updateData({'status': 'ACCEPTED'}).then((_) {
+    databaseReference.collection("friend_request").doc(index)
+          .update({'status': 'ACCEPTED'}).then((_) {
         print("success!");
       });
   }
@@ -27,8 +26,8 @@ Widget friendBody(BuildContext context, User user) {
   void _deleteRequest(String documentID) {
     databaseReference
       ..collection("friend_request")
-          .document(documentID)
-          .updateData({'status': 'DELETED'}).then((_) {
+          .doc(documentID)
+          .update({'status': 'DELETED'}).then((_) {
         print("success!");
       });
   }
@@ -100,7 +99,7 @@ Widget friendBody(BuildContext context, User user) {
                                     child: RaisedButton(
                                       color: Colors.red,
                                       onPressed: () async {
-                                        _deleteRequest(friend.documentID);
+                                        _deleteRequest(friend.id);
                                       },
                                       child: Text("Delete"),
                                     ),

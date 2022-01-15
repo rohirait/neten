@@ -15,7 +15,7 @@ class NewFriends extends State<SearchFriends> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _autoValidate = false;
 
-  final databaseReference = Firestore.instance;
+  final databaseReference = FirebaseFirestore.instance;
   var documents;
 
   @override
@@ -52,7 +52,7 @@ class NewFriends extends State<SearchFriends> {
                       fit: BoxFit.cover)),
               child: new Form(
                 key: _formKey,
-                autovalidate: _autoValidate,
+                autovalidateMode: AutovalidateMode.always,
                 child: FormUI(_width),
               ))),
     );
@@ -202,8 +202,8 @@ class NewFriends extends State<SearchFriends> {
   }
 
   Future<void> _loadFriends() async {
-    QuerySnapshot querySnapshot = await databaseReference.collection('friends').where('email', isEqualTo: user.email).getDocuments().then((value){
-      value.documents.forEach((element) {
+     await databaseReference.collection('friends').where('email', isEqualTo: user.email).get().then((value){
+      value.docs.forEach((element) {
         friendNames.add(element.get('friend_name'));
       });
     });

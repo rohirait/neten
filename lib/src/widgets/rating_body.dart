@@ -167,7 +167,7 @@ Widget ratingBody(BuildContext context, User user) {
                                             child: RaisedButton(
                                               color: Colors.red,
                                               onPressed: () async {
-                                                _deleteRequest(friend.documentID);
+                                                _deleteRequest(friend.id);
                                               },
                                               child: Text("Delete"),
                                             ),
@@ -237,8 +237,8 @@ void addScore(Score score, User user, String id) async {
   });
 
  FirebaseFirestore.instance.collection("score_request")
-     .document(id)
-     .updateData({'accepted': 'ACCEPTED'}).then((_) {
+     .doc(id)
+     .update({'accepted': 'ACCEPTED'}).then((_) {
    print("success!");
 
  });
@@ -248,8 +248,8 @@ void addScore(Score score, User user, String id) async {
 void _deleteRequest(String documentID) {
   FirebaseFirestore.instance
       .collection("score_request")
-      .document(documentID)
-      .updateData({'status': 'DELETED'}).then((_) {
+      .doc(documentID)
+      .update({'status': 'DELETED'}).then((_) {
     print("success!");
   });
 }

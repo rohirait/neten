@@ -11,9 +11,9 @@ class AddFriends extends StatefulWidget {
 }
 
 class Friends extends State<AddFriends> {
-  Firestore db;
+  FirebaseFirestore db;
   User user;
-  final databaseReference = Firestore.instance;
+  final databaseReference = FirebaseFirestore.instance;
   bool _loading = true;
 
   @override
@@ -123,7 +123,7 @@ class Friends extends State<AddFriends> {
                                                   color: Colors.green,
                                                   onPressed: () async {
                                                     _addFriend(
-                                                        friend.documentID,
+                                                        friend.id,
                                                         friend['sender_name'],
                                                         friend[
                                                             'recipient_email']);
@@ -141,7 +141,7 @@ class Friends extends State<AddFriends> {
                                                   color: Colors.red,
                                                   onPressed: () async {
                                                     _deleteRequest(
-                                                        friend.documentID);
+                                                        friend.id);
                                                   },
                                                   child: Text("Delete"),
                                                 ),
@@ -161,7 +161,7 @@ class Friends extends State<AddFriends> {
                   _loading
                       ? new CircularProgressIndicator()
                       : StreamBuilder(
-                          stream: Firestore.instance
+                          stream: FirebaseFirestore.instance
                               .collection('friends')
                               .where('email', isEqualTo: user.email)
                               .snapshots(),
@@ -179,7 +179,7 @@ class Friends extends State<AddFriends> {
                                         snapshot.data.documents[index];
                                     return ElevatedButton(
                                       onPressed: () {
-                                        Friend clicked = new Friend(name: friend['friend_name'], email: friend['friend_email'], uid: friend.documentID);
+                                        Friend clicked = new Friend(name: friend['friend_name'], email: friend['friend_email'], uid: friend.id);
 
                                         Navigator.push(
                                           context,
@@ -214,8 +214,8 @@ class Friends extends State<AddFriends> {
     });
 
     databaseReference.collection("friend_request")
-          .document(index)
-          .updateData({'status': 'ACCEPTED'}).then((_) {
+          .doc(index)
+          .update({'status': 'ACCEPTED'}).then((_) {
         print("success!");
       });
   }
@@ -223,8 +223,8 @@ class Friends extends State<AddFriends> {
   void _deleteRequest(String documentID) {
     databaseReference
       .collection("friend_request")
-          .document(documentID)
-          .updateData({'status': 'DELETED'}).then((_) {
+          .doc(documentID)
+          .update({'status': 'DELETED'}).then((_) {
         print("success!");
       });
   }

@@ -62,7 +62,7 @@ class RatingScreen extends State<RatingsStateful> {
                       ),
                       user != null
                           ? StreamBuilder(
-                              stream: Firestore.instance
+                              stream: FirebaseFirestore.instance
                                   .collection('scores')
                                   .where('you', isEqualTo: user.email).orderBy('scores', descending: true)
                                   .snapshots(),

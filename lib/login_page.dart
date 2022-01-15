@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutterfire_ui/auth.dart';
 import 'src/screens/home_screen.dart';
 import 'sign_in.dart';
 
@@ -32,6 +32,7 @@ class _LoginPageState extends State<LoginPage> {
                   )),
               SizedBox(height: 50),
               _signInButton(),
+
             ],
           ),
         ),

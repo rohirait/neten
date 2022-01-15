@@ -41,41 +41,4 @@ class DBProvider {
     });
   }
 
-  /*
-	 * Note Table
-	 */
-  newNote(Note note) async {
-    final db = await database;
-    var res = await db.insert('note', note.toJson());
-
-    return res;
-  }
-
-  getNotes() async {
-    final db = await database;
-    var res = await db.query('note');
-    List<Note> notes = res.isNotEmpty ? res.map((note) => Note.fromJson(note)).toList() : [];
-
-    return notes;
-  }
-
-  getNote(int id) async {
-    final db = await database;
-    var res = await db.query('note', where: 'id = ?', whereArgs: [id]);
-
-    return res.isNotEmpty ? Note.fromJson(res.first) : null;
-  }
-
-  updateNote(Note note) async {
-    final db = await database;
-    var res = await db.update('note', note.toJson(), where: 'id = ?', whereArgs: [note.id]);
-
-    return res;
-  }
-
-  deleteNote(int id) async {
-    final db = await database;
-
-    db.delete('note', where: 'id = ?', whereArgs: [id]);
-  }
 }
