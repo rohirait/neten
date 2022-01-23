@@ -61,91 +61,93 @@ class NewFriends extends State<SearchFriends> {
   Widget FormUI(double width) {
     return Container(
       margin: new EdgeInsets.all(15.0),
-      child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          //Center Column contents vertically,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            SizedBox(height: AppBar().preferredSize.height + 20),
-            Opacity(
-              opacity: 0.5,
-              child: Container(
-                color: Color(0xFF00A6FF),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          top: 4.0, bottom: 4.0, left: 8.0, right: 8.0),
-                      child: Text('Name: ',
-                          style: TextStyle(
-                            fontSize: 20.0, // insert your font size here
-                          )),
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: new TextFormField(
-                          validator : validateName,
-                          style: TextStyle(
-                            fontSize: 20.0,
+      child: SingleChildScrollView(
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            //Center Column contents vertically,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              SizedBox(height: AppBar().preferredSize.height + 20),
+              Opacity(
+                opacity: 0.5,
+                child: Container(
+                  color: Color(0xFF00A6FF),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            top: 4.0, bottom: 4.0, left: 8.0, right: 8.0),
+                        child: Text('Name: ',
+                            style: TextStyle(
+                              fontSize: 20.0, // insert your font size here
+                            )),
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: new TextFormField(
+                            validator : validateName,
+                            style: TextStyle(
+                              fontSize: 20.0,
+                            ),
+                            onSaved: (String val) {
+                              _name = val;
+                            },
                           ),
-                          onSaved: (String val) {
-                            _name = val;
-                          },
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
-            Opacity(
-              opacity: 0.5,
-              child: Container(
-                color: Color(0xFF00A6FF),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          top: 4.0, bottom: 4.0, left: 8.0, right: 8.0),
-                      child: Text('Email: ',
-                          style: TextStyle(
-                            fontSize: 20.0, // insert your font size here
-                          )),
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: new TextFormField(
-                          keyboardType: TextInputType.emailAddress,
-                          validator: validateEmail,
-                          style: TextStyle(
-                            fontSize: 20.0,
+              Opacity(
+                opacity: 0.5,
+                child: Container(
+                  color: Color(0xFF00A6FF),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            top: 4.0, bottom: 4.0, left: 8.0, right: 8.0),
+                        child: Text('Email: ',
+                            style: TextStyle(
+                              fontSize: 20.0, // insert your font size here
+                            )),
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: new TextFormField(
+                            keyboardType: TextInputType.emailAddress,
+                            validator: validateEmail,
+                            style: TextStyle(
+                              fontSize: 20.0,
+                            ),
+                            onSaved: (String val) {
+                              _email = val;
+                            },
                           ),
-                          onSaved: (String val) {
-                            _email = val;
-                          },
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: ButtonTheme(
-                minWidth: 200,
-                height: 60.0,
-                child: RaisedButton(
-                  onPressed: _validateInputs,
-                  child: Text("Add friend"),
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: ButtonTheme(
+                  minWidth: 200,
+                  height: 60.0,
+                  child: RaisedButton(
+                    onPressed: _validateInputs,
+                    child: Text("Add friend"),
+                  ),
                 ),
               ),
-            ),
-          ]),
+            ]),
+      ),
     );
   }
   String validateName(String value){
@@ -181,7 +183,7 @@ class NewFriends extends State<SearchFriends> {
   }
 
   void sendForm() async {
-      DocumentReference ref = await databaseReference.collection("friends")
+       await databaseReference.collection("friends")
           .add({
         'email': user.email,
         'friend_email': _email,
@@ -189,7 +191,7 @@ class NewFriends extends State<SearchFriends> {
         'uid': user.uid
       });
      if(_email != null && _email != ""){
-       DocumentReference ref = await databaseReference.collection("friend_request")
+        await databaseReference.collection("friend_request")
            .add({
          'email': user.email,
          'recipient_email': _email,

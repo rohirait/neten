@@ -32,101 +32,104 @@ Widget friendBody(BuildContext context, User user) {
       });
   }
 
-  return Container(
-      decoration: BoxDecoration(
-          image: DecorationImage(
-              image: AssetImage("assets/raster.jpg"), fit: BoxFit.cover)),
-      child: SafeArea(
-        child: Column(
-          children: [
-            SizedBox(height: AppBar().preferredSize.height + 20),
-            StreamBuilder(
-                stream: loadInfo(user),
-                builder: (context, snapshot) {
-                  if (snapshot.data == null)
-                    return CircularProgressIndicator();
-                  else if (snapshot.data.documents.length > 0) {
-                    return ListView.builder(
-                        padding: const EdgeInsets.all(0),
-                        shrinkWrap: true,
-                        itemCount: snapshot.data.documents.length,
-                        itemBuilder: (context, index) {
-                          DocumentSnapshot friend =
-                              snapshot.data.documents[index];
-                          return Container(
-                            decoration: new BoxDecoration(
-                                color: Color(0xFF00A6FF).withOpacity(
-                                    0.5) // Specifies the background color and the opacity
-                                ),
-                            margin: EdgeInsets.only(right: 20.0, left: 20.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 4.0,
-                                      bottom: 4.0,
-                                      left: 8.0,
-                                      right: 8.0),
-                                  child: Text(friend['sender_name'],
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        fontSize:
-                                            20.0, // insert your font size here
-                                      )),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(10.0),
-                                  child: ButtonTheme(
-                                    buttonColor: Colors.green,
-                                    height: 60.0,
-                                    child: RaisedButton(
-                                      color: Colors.green,
-                                      onPressed: () async {
-                                        _addFriend(
-                                            friend.id,
-                                            friend['sender_name'],
-                                            friend['email']);
-                                      },
-                                      child: Text("Add"),
+  return SafeArea(
+    child: Container(
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
+        decoration: BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage("assets/raster.jpg"), fit: BoxFit.cover)),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              SizedBox(height: AppBar().preferredSize.height + 20),
+              StreamBuilder(
+                  stream: loadInfo(user),
+                  builder: (context, snapshot) {
+                    if (snapshot.data == null)
+                      return CircularProgressIndicator();
+                    else if (snapshot.data.docs.length > 0) {
+                      return ListView.builder(
+                          padding: const EdgeInsets.all(0),
+                          shrinkWrap: true,
+                          itemCount: snapshot.data.docs.length,
+                          itemBuilder: (context, index) {
+                            DocumentSnapshot friend =
+                                snapshot.data.docs[index];
+                            return Container(
+                              decoration: new BoxDecoration(
+                                  color: Color(0xFF00A6FF).withOpacity(
+                                      0.5) // Specifies the background color and the opacity
+                                  ),
+                              margin: EdgeInsets.only(right: 20.0, left: 20.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        top: 4.0,
+                                        bottom: 4.0,
+                                        left: 8.0,
+                                        right: 8.0),
+                                    child: Text(friend['sender_name'],
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize:
+                                              20.0, // insert your font size here
+                                        )),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: ButtonTheme(
+                                      buttonColor: Colors.green,
+                                      height: 60.0,
+                                      child: RaisedButton(
+                                        color: Colors.green,
+                                        onPressed: () async {
+                                          _addFriend(
+                                              friend.id,
+                                              friend['sender_name'],
+                                              friend['email']);
+                                        },
+                                        child: Text("Add"),
+                                      ),
                                     ),
                                   ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(10.0),
-                                  child: ButtonTheme(
-                                    height: 60.0,
-                                    child: RaisedButton(
-                                      color: Colors.red,
-                                      onPressed: () async {
-                                        _deleteRequest(friend.id);
-                                      },
-                                      child: Text("Delete"),
+                                  Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: ButtonTheme(
+                                      height: 60.0,
+                                      child: RaisedButton(
+                                        color: Colors.red,
+                                        onPressed: () async {
+                                          _deleteRequest(friend.id);
+                                        },
+                                        child: Text("Delete"),
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          );
-                        });
-                  }
-                  return Visibility(
-                    child: Text("Gone"),
-                    visible: false,
-                  );
-                }),
-            Expanded(
-              child: StreamBuilder(
+                                ],
+                              ),
+                            );
+                          });
+                    }
+                    return Visibility(
+                      child: Text("Gone"),
+                      visible: false,
+                    );
+                  }),
+              StreamBuilder(
                   stream: loadFriends(user),
                   builder: (context, snapshot) {
                     if (snapshot.data == null)
                       return new CircularProgressIndicator();
                     return ListView.builder(
                         padding: const EdgeInsets.all(8),
-                        itemCount: snapshot.data.documents.length,
+                        shrinkWrap: true,
+                        itemCount: snapshot.data.docs.length,
                         itemBuilder: (context, index) {
                           DocumentSnapshot friend =
-                              snapshot.data.documents[index];
+                              snapshot.data.docs[index];
                           addFriendToDB(friend);
                           return ElevatedButton(
                             onPressed: () {
@@ -152,10 +155,10 @@ Widget friendBody(BuildContext context, User user) {
                           );
                         });
                   }),
-            ),
-          ],
-        ),
-      ));
+            ],
+          ),
+        )),
+  );
 
 
 }

@@ -30,45 +30,30 @@ Widget buildBody(BuildContext context, User user) {
                   ),
                 ),
               ),
-              Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ButtonTheme(
-                      minWidth: 200,
-                      height: 60.0,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => RatingsStateful()),
-                          );
-                        },
-                        child: Text("Rating"),
-                      ),
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: ButtonTheme(
-                        minWidth: 200,
-                        height: 60.0,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => AddGame()),
-                            );
-                          },
-                          child: Text("Add Game"),
+              SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: ButtonTheme(
+                          minWidth: 200,
+                          height: 60.0,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => AddGame()),
+                              );
+                            },
+                            child: Text("Add Game"),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),
@@ -98,9 +83,9 @@ Widget buildBody(BuildContext context, User user) {
                     return ListView.builder(
                         padding: const EdgeInsets.all(8),
                         shrinkWrap: true,
-                        itemCount: snapshot.data.documents.length,
+                        itemCount: snapshot.data.docs.length,
                         itemBuilder: (context, index) {
-                          Score score = Score.fromSnapshot(snapshot.data.documents[index]);
+                          Score score = Score.fromSnapshot(snapshot.data.docs[index]);
                           return Container(
                             decoration: new BoxDecoration(
                                 color: Color(0xFF00A6FF).withOpacity(

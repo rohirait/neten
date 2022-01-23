@@ -17,15 +17,16 @@ class Score implements FirebaseConverter<Score> {
         uid = data['uid'] ?? '',
         opponent = data['opponent'] ?? '',
         date = data['date'] ?? '',
-        opponentEmail = data['opponent_email'];
+        opponentEmail = data['opponent_email'] ?? '';
 
-  Score.fromSnapshot(DocumentSnapshot data)
+  Score.fromSnapshot(DocumentSnapshot<dynamic> data)
       : uid = data.reference.id,
         opponentScore = data.get('opponent_score') ?? '',
         yourScore = data.get('your_score') ?? '',
         opponent = data.get('opponent') ?? '',
         date = data.get('date') != null ? readTimestamp(data.get('date').toDate()) : '',
-        opponentEmail = data.get('opponent_email') ?? '';
+        opponentEmail = data.data()['opponent_email'] ?? '';
+        // opponentEmail = data?.get('opponent_email') ?? '';
 
   @override
   String id;

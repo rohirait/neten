@@ -47,9 +47,9 @@ class MainPageState extends State<MainPage> {
         onTap: onTabTapped, // new
         currentIndex: _currentIndex, // new
         items: [
-          new BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          new BottomNavigationBarItem(icon: Icon(Icons.sports_tennis_sharp), label: 'Games'),
-          new BottomNavigationBarItem(
+           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+           BottomNavigationBarItem(icon: Icon(Icons.sports_tennis_sharp), label: 'Games'),
+           BottomNavigationBarItem(
               icon: Icon(Icons.person), label: 'Friends')
         ],
       ),
