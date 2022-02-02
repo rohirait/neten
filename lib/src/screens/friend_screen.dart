@@ -92,10 +92,10 @@ class FriendScreenState extends State<FriendScreen> {
               scrollDirection: Axis.vertical,
               padding: const EdgeInsets.all(8),
               shrinkWrap: true,
-              itemCount: snapshot.data.documents.length,
+              itemCount: snapshot.data.docs.length,
               itemBuilder: (context, index) {
-                DocumentSnapshot game = snapshot.data.documents[index];
-                Score score = Score.fromSnapshot(snapshot.data.documents[index]);
+                DocumentSnapshot game = snapshot.data.docs[index];
+                Score score = Score.fromSnapshot(snapshot.data.docs[index]);
                 return Container(
                   decoration: new BoxDecoration(
                       color: Color(0xFF00A6FF).withOpacity(

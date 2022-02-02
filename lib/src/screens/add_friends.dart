@@ -13,7 +13,6 @@ class NewFriends extends State<SearchFriends> {
   String _email;
   var friendNames = [];
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  bool _autoValidate = false;
 
   final databaseReference = FirebaseFirestore.instance;
   var documents;
@@ -50,7 +49,7 @@ class NewFriends extends State<SearchFriends> {
                   image: DecorationImage(
                       image: AssetImage("assets/raster.jpg"),
                       fit: BoxFit.cover)),
-              child: new Form(
+              child: Form(
                 key: _formKey,
                 autovalidateMode: AutovalidateMode.always,
                 child: FormUI(_width),
@@ -140,7 +139,7 @@ class NewFriends extends State<SearchFriends> {
                 child: ButtonTheme(
                   minWidth: 200,
                   height: 60.0,
-                  child: RaisedButton(
+                  child: ElevatedButton(
                     onPressed: _validateInputs,
                     child: Text("Add friend"),
                   ),
@@ -177,7 +176,6 @@ class NewFriends extends State<SearchFriends> {
       Navigator.pop(context);
     } else {
       setState(() {
-        _autoValidate = true;
       });
     }
   }
