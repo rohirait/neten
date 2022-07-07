@@ -1,23 +1,34 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 
 import 'firebase_convertable.dart';
 
-class Score implements FirebaseConverter<Score> {
+class Score {
   int opponentScore;
   int yourScore;
   String uid;
   String opponent;
   String date;
   String opponentEmail;
-  Score({this.opponentScore, this.yourScore, this.uid, this.opponent, this.date, this.opponentEmail});
-  Score.fromMap(Map<String, dynamic> data)
-      : opponentScore = data['opponent_score'] ?? '',
-        yourScore = data['your_score'] ?? '',
-        uid = data['uid'] ?? '',
-        opponent = data['opponent'] ?? '',
-        date = data['date'] ?? '',
-        opponentEmail = data['opponent_email'] ?? '';
+  String? _fullName;
+
+  Score(
+      {required this.opponentScore,
+      required this.yourScore,
+      required this.uid,
+      required this.opponent,
+      required this.date,
+      required this.opponentEmail});
+
+  Score.fromMap(Map<String, dynamic>? data)
+      : opponentScore = data?['opponent_score'] ?? '',
+        yourScore = data?['your_score'] ?? '',
+        uid = data?['uid'] ?? '',
+        opponent = data?['opponent'] ?? '',
+        date = data?['date'] != null ? readTimestamp(data!['date'].toDate()) : '' ,
+        opponentEmail = data?['opponent_email'] ?? '',
+        id = data?['id'].toString();
 
   Score.fromSnapshot(DocumentSnapshot<dynamic> data)
       : uid = data.reference.id,
@@ -26,21 +37,45 @@ class Score implements FirebaseConverter<Score> {
         opponent = data.get('opponent') ?? '',
         date = data.get('date') != null ? readTimestamp(data.get('date').toDate()) : '',
         opponentEmail = data.data()['opponent_email'] ?? '';
-        // opponentEmail = data?.get('opponent_email') ?? '';
+
+  // opponentEmail = data?.get('opponent_email') ?? '';
 
   @override
-  String id;
+  String? id;
 
   @override
   Score parseFromMap(Map<String, dynamic> snapshot, String id) {
     return Score.fromMap(snapshot);
   }
 
+  set fullName(String? value) {
+    _fullName = value;
+  }
+
+
+  String? get fullName {
+    return _fullName ?? 'Unknown';
+  }
+
   @override
-  Map<String, dynamic> toJson() =>
-      {'opponent_score': opponentScore, 'your_score': yourScore, 'uid': uid, 'opponent': opponent, 'date': date, 'opponent_email': opponentEmail};
+  Map<String, dynamic> toJson() => {
+        'opponent_score': opponentScore,
+        'your_score': yourScore,
+        'uid': uid,
+        'opponent': opponent,
+        'date': date,
+        'opponent_email': opponentEmail
+      };
 
   static String readTimestamp(DateTime timestamp) {
-    return DateFormat('dd:MM:yy').format(timestamp);
+    return DateFormat('dd.MM.yyyy').format(timestamp);
+  }
+
+  Stream getScores(User user) {
+    return FirebaseFirestore.instance
+        .collection('scores')
+        .where('you', isEqualTo: user.email)
+        .orderBy('date', descending: true)
+        .snapshots();
   }
 }

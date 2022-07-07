@@ -1,29 +1,92 @@
 import 'package:flutter/material.dart';
-import 'package:sqflite/sqflite.dart';
-import 'src/app.dart';
-import 'package:path/path.dart';
-
-
+import 'package:firebase_core/firebase_core.dart';
+import 'package:netten/auth_widget.dart';
+import 'package:netten/src/screens/home/home_screen.dart';
+import 'package:netten/src/screens/onboarding/sign_in.dart';
+import 'package:netten/src/services/shared_preference_service.dart';
+import 'package:netten/theme.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // Open the database and store the reference.
-  final database = openDatabase(
-    // Set the path to the database. Note: Using the `join` function from the
-    // `path` package is best practice to ensure the path is correctly
-    // constructed for each platform.
-    join(await getDatabasesPath(), 'doggie_database.db'),
-    // When the database is first created, create a table to store dogs.
-    onCreate: (db, version) {
-      // Run the CREATE TABLE statement on the database.
-      return db.execute(
-        'CREATE TABLE friends(id INTEGER PRIMARY KEY, name TEXT, email TEXT)',
-      );
-    },
-    // Set the version. This executes the onCreate function and provides a
-    // path to perform database upgrades and downgrades.
-    version: 1,
-  );
-  runApp(App());
+  await Firebase.initializeApp();
+  final sharedPreferences = await SharedPreferences.getInstance();
+  runApp(ProviderScope(
+    overrides: [
+      sharedPreferencesServiceProvider.overrideWithValue(
+        SharedPreferencesService(sharedPreferences),
+      ),
+    ],
+    child: MyApp(),
+  ));
 }
 
+class MyApp extends ConsumerWidget {
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    print("Got into run app build");
+    return MaterialApp(
+      theme: NetenTheme,
+      debugShowCheckedModeBanner: false,
+      home: AuthWidget(
+        nonSignedInBuilder: (_) => Consumer(
+          builder: (context, ref, _) {
+            return SignIn();
+          },
+        ),
+        signedInBuilder: (_) => HomeScreen(),
+      ),
+    );
+  }
+}
+
+
+
+//TODO remove old code
+// class App extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     SystemChrome.setPreferredOrientations([
+//       DeviceOrientation.portraitUp,
+//       DeviceOrientation.portraitDown,
+//     ]);
+//
+//     return MaterialApp(
+//         title: 'Flutter Login',
+//         theme: ThemeData(
+//           primarySwatch: Colors.blue,
+//         ),
+//         home: FutureBuilder(
+//             future: Firebase.initializeApp(),
+//             builder: (BuildContext context, snapshot) {
+//               if (snapshot.connectionState == ConnectionState.waiting) {
+//                 return CircularProgressIndicator();
+//               }
+//               if (snapshot.hasData) {
+//                 User user = FirebaseAuth.instance.currentUser;
+//                 if(user != null)return MainPage(user);
+//                 return LoginPage();
+//               }
+//
+//               /// other way there is no user logged.
+//               return LoginPage();
+//             })
+// //      onGenerateRoute: routes,
+//         );
+//   }
+//
+//   Future<Route> routes(RouteSettings settings) async {
+//     if (settings.name == '/') {
+//       return MaterialPageRoute(builder: (context) {
+//         return LoginPage();
+//       });
+//       // signed in
+//     } else {
+//       return MaterialPageRoute(builder: (context) {
+//         return LoginPage();
+//       });
+//     }
+//   }
+// }

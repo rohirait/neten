@@ -3,20 +3,12 @@ class Friend {
   final String email;
   final String uid;
 
-  const Friend({this.name, this.email, this.uid});
+  const Friend({required this.name, required this.email, required this.uid});
 
-  factory Friend.fromMap(Map<String, dynamic> data, String documentId) {
-    if (data == null) {
-      return null;
-    }
-    final name = data['friend_name'] as String;
-    if (name == null) {
-      return null;
-    }
-    final email = data['friend_email'] as String;
-    return Friend(name: name, email: email, uid: documentId);
-  }
-
+  Friend.fromMap(Map<String, dynamic>? data)
+      : name = data?['friend_name'] ?? '',
+        email = data?['friend_email'] ?? '',
+        uid = data?['uid'] ?? '';
   Map<String, dynamic> toMap(){
     return {
       'name': name,
