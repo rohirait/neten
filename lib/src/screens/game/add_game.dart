@@ -30,28 +30,6 @@ class _AddGameScreenState extends State<AddGameScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: NetenColor.backgroundColor,
-        bottomNavigationBar: Consumer(
-          builder: (BuildContext context, WidgetRef ref, Widget? child) {
-            final String? email = ref.read(authenticationProvider).getUser()?.email;
-            return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ElevatedButton(
-                onPressed: () => saveMatch(email ?? ''),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child:
-                      Text('Save match', style: Theme.of(context).textTheme.bodyText1?.copyWith(color: Colors.white)),
-                ),
-                style: ElevatedButton.styleFrom(
-                  primary: NetenColor.buttonColor,
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(50)),
-                  ),
-                ),
-              ),
-            );
-          },
-        ),
         body: SafeArea(
           child: SingleChildScrollView(
             controller: ScrollController(),
@@ -145,7 +123,7 @@ class _AddGameScreenState extends State<AddGameScreen> {
                           children: [
                             Row(children: [
                               SizedBox(width: 50, child: Text('YOU', style: Theme.of(context).textTheme.subtitle1)),
-                              SizedBox(width: 20),
+                              SizedBox(width: 14),
                               Container(
                                   height: 55,
                                   width: 55,
@@ -178,7 +156,7 @@ class _AddGameScreenState extends State<AddGameScreen> {
                             SizedBox(height: 8),
                             Row(children: [
                               SizedBox(width: 50, child: Text('OPP.', style: Theme.of(context).textTheme.subtitle1)),
-                              SizedBox(width: 20),
+                              SizedBox(width: 14),
                               Container(
                                   height: 55,
                                   width: 55,
@@ -207,7 +185,7 @@ class _AddGameScreenState extends State<AddGameScreen> {
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16.0),
                           child: Scrollbar(
-                            isAlwaysShown: true,
+                            thumbVisibility: true,
                             controller: _scrollController,
                             trackVisibility: true,
                             child: SingleChildScrollView(
@@ -285,10 +263,33 @@ class _AddGameScreenState extends State<AddGameScreen> {
                       },
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: Text('Add game',
+                        child: Text('Add set',
                             style: Theme.of(context).textTheme.bodyText1?.copyWith(color: NetenColor.primaryColor)),
                       ),
                     ),
+                  ),
+                  SizedBox(height: 15),
+                  Consumer(
+                    builder: (BuildContext context, WidgetRef ref, Widget? child) {
+                      final String? email = ref.read(authenticationProvider).getUser()?.email;
+                      return SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () => saveMatch(email ?? ''),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            child:
+                            Text('Save match', style: Theme.of(context).textTheme.bodyText1?.copyWith(color: Colors.white)),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            primary: NetenColor.buttonColor,
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(50)),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),
