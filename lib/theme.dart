@@ -31,6 +31,7 @@ class NetenColor extends Color {
   static const Color greyBorder = Color(0xFF464D5C);
   static const Color lightGreyBorder = Color(0xFFCBCBCB);
   static const Color scrollBarColor = Color(0xFF787C8B);
+  static const Color facebookColor = const Color(0xff39579A);
 }
 
 TextTheme _mainTextTheme = const TextTheme(

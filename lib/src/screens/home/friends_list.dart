@@ -6,6 +6,7 @@ import 'package:netten/src/providers/friends_provider.dart';
 import 'package:netten/src/providers/score_provider.dart';
 
 import 'package:netten/src/models/score.dart';
+import 'package:netten/src/screens/friends/add_friend.dart';
 
 class FriendsList extends ConsumerWidget {
   @override
@@ -17,15 +18,15 @@ class FriendsList extends ConsumerWidget {
       data: (friends) {
         return Expanded(
           child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: Column(
-              children: [
-                for(Friend friend in friends) ...[FriendCard(friend: friend), SizedBox(height: 8)]
-              ],
+            child: Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Column(
+                children: [
+                  for (Friend friend in friends) ...[FriendCard(friend: friend), SizedBox(height: 8)]
+                ],
+              ),
             ),
           ),
-      ),
         );
       },
     );
@@ -36,23 +37,26 @@ class FriendCard extends StatelessWidget {
   final Friend friend;
 
   const FriendCard({Key? key, required this.friend}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: Card(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15.0),
-          ),
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Center(child: Text(friend.name, style: Theme.of(context).textTheme.bodyText1)),
-        )
-
+    return InkWell(
+      onTap: () {
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+          return AddFriendScreen(friend: friend);
+        }));
+      },
+      child: SizedBox(
+        width: double.infinity,
+        child: Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15.0),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Center(child: Text(friend.name, style: Theme.of(context).textTheme.bodyText1)),
+            )),
       ),
     );
   }
-
 }
-
-

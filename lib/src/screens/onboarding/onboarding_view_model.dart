@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:netten/src/services/shared_preference_service.dart';
 import 'package:state_notifier/state_notifier.dart';
-
+//todo Is this used?
 final onboardingViewModelProvider =
 StateNotifierProvider<OnboardingViewModel, bool>((ref) {
   final sharedPreferencesService = ref.watch(sharedPreferencesServiceProvider);

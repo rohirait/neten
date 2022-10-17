@@ -29,6 +29,11 @@ class _AddGameScreenState extends State<AddGameScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          bottomOpacity: 0.0,
+          elevation: 0.0,
+        ),
         backgroundColor: NetenColor.backgroundColor,
         body: SafeArea(
           child: SingleChildScrollView(

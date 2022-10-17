@@ -18,6 +18,5 @@ class FirestoreDatabase {
         .orderBy('date', descending: true)
         .snapshots();
   }
-  // a stream that is continuously listening for changes happening in the database
 
 }

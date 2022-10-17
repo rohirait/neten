@@ -1,7 +1,10 @@
-import 'package:flutter/cupertino.dart';
+
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:netten/src/providers/auth_provider.dart';
+
+import 'package:netten/theme.dart';
 
 
 //todo add colors to theme, work with button themes
@@ -56,6 +59,88 @@ class SignIn extends ConsumerWidget {
                       ),
                     )),
               ),
+              const SizedBox(height: 18),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 46.0),
+                child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        shadowColor: Colors.black,
+                        primary: NetenColor.facebookColor,
+                        elevation: 4,
+                        textStyle: Theme.of(context).textTheme.bodyText2?.copyWith(color: Colors.black)),
+                    onPressed: () async {
+                      ref
+                          .watch(authenticationProvider)
+                          .signInWithFacebook(context)
+                          .onError((error, stackTrace) => throw Exception(error.toString()));
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          const Image(
+                            image: AssetImage('assets/facebook_logo.png'),
+                            height: 18.0,
+                          ),
+                          const SizedBox(width: 15),
+                          Text('Continue with Facebook',
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.white,
+                                  letterSpacing: 0.25,
+                                  height: 1.2,
+                                  fontFamily: 'Roboto',
+                                  fontWeight: FontWeight.w500))
+                        ],
+                      ),
+                    )),
+              ),
+              SizedBox(height: 18),
+              if(Platform.isIOS)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 46.0),
+                  child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          shadowColor: Colors.black,
+                          primary: Colors.white,
+                          elevation: 4,
+                          textStyle: Theme.of(context).textTheme.bodyText2?.copyWith(color: Colors.black)),
+                      onPressed: () async {
+                        ref
+                            .watch(authenticationProvider)
+                            .signInWithFacebook(context)
+                            .onError((error, stackTrace) => throw Exception(error.toString()));
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Icon(
+                              Icons.apple,
+                              color: Colors.black
+                            ),
+                            const SizedBox(width: 15),
+                            Text('Continue with Apple',
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.black,
+                                    letterSpacing: 0.25,
+                                    height: 1.2,
+                                    fontFamily: 'Roboto',
+                                    fontWeight: FontWeight.w500))
+                          ],
+                        ),
+                      )),
+                ),
+
             ]),
       ),
     );

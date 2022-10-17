@@ -79,10 +79,10 @@ Future<List<String>> createScore({required DateTime date, required Score score, 
     });
     DocumentReference ref2 = await FirebaseFirestore.instance.collection("score_request").add({
       'date': date,
-      'opponent': yourEmail,
+      'opponent': score.opponentEmail,
       'your_score': score.opponentScore,
       'opponent_score': score.yourScore,
-      'you': score.opponentEmail,
+      'you': yourEmail,
       'created': FieldValue.serverTimestamp(),
       'accepted': 'PENDING'
     });

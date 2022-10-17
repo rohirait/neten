@@ -4,12 +4,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:netten/src/providers/friends_provider.dart';
 
 import '../../../theme.dart';
+import '../../models/friend.dart';
 import '../../providers/auth_provider.dart';
 import '../../widgets/gradient_text.dart';
 
 class AddFriendScreen extends StatefulWidget {
+  const AddFriendScreen({Key? key,  this.friend}) : super(key: key);
+
   @override
   State<AddFriendScreen> createState() => _AddFriendScreenState();
+  final Friend? friend;
 }
 
 class _AddFriendScreenState extends State<AddFriendScreen> {
@@ -21,8 +25,13 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          bottomOpacity: 0.0,
+          elevation: 0.0,
+        ),
         backgroundColor: NetenColor.backgroundColor,
-        bottomNavigationBar: Consumer(
+        bottomNavigationBar: widget.friend == null ? Consumer(
           builder: (BuildContext context, WidgetRef ref, Widget? child) {
             final User? user = ref.read(authenticationProvider).getUser() ;
             return Padding(
@@ -47,7 +56,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
               ),
             );
           },
-        ),
+        ) : null,
         body: SafeArea(
             child: SingleChildScrollView(
                 child: Form(
@@ -69,6 +78,8 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: TextFormField(
+                    initialValue: widget.friend != null ? widget.friend!.name : '',
+                    enabled: widget.friend == null,
                     decoration: const InputDecoration(
                       border: InputBorder.none,
                       icon: Icon(Icons.person, color: NetenColor.primaryColor),
@@ -96,6 +107,8 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: TextFormField(
+                    enabled: widget.friend == null,
+                    initialValue: widget.friend != null ? widget.friend!.email : '',
                     decoration: const InputDecoration(
                       border: InputBorder.none,
                       fillColor: NetenColor.primaryColor,
@@ -120,7 +133,6 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
   void validateFormAndAddFriend(User s) {
     if(_formKey.currentState?.validate() ?? false){
       _formKey.currentState?.save();
-      print("Saving friend with email: $email and name is: $name");
       if (email != null && name != null) {
         addFriend(email: email! ,name: name!, user: s);
       }
