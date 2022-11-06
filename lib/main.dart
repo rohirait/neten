@@ -26,7 +26,6 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    print("Got into run app build");
     return MaterialApp(
       theme: NetenTheme,
       debugShowCheckedModeBanner: false,

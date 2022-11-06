@@ -105,7 +105,9 @@ class _HomeScreenState extends State<HomeScreen> {
             );
           },
         ),
-        GamesList()
+        //todo replace with friend request list
+        ScoreRequestWidget(),
+        FriendRequestWidget()
       ],
       2: [
         FriendsList(),

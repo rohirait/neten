@@ -31,14 +31,17 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
           elevation: 0.0,
         ),
         backgroundColor: NetenColor.backgroundColor,
-        bottomNavigationBar: widget.friend == null ? Consumer(
+        bottomNavigationBar: (widget.friend == null || widget.friend!.email.isEmpty) ? Consumer(
           builder: (BuildContext context, WidgetRef ref, Widget? child) {
             final User? user = ref.read(authenticationProvider).getUser() ;
             return Padding(
               padding: const EdgeInsets.all(8.0),
               child: ElevatedButton(
                 onPressed: () {
-                  if (user != null) {
+                  if(user != null && widget.friend != null){
+                    validateFormAndUpdateFriend(widget.friend!, user);
+
+                  } else if (user != null) {
                     validateFormAndAddFriend(user);
                   };
                 },
@@ -48,7 +51,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
                       Text('Add friend', style: Theme.of(context).textTheme.bodyText1?.copyWith(color: Colors.white)),
                 ),
                 style: ElevatedButton.styleFrom(
-                  primary: NetenColor.buttonColor,
+                  backgroundColor: NetenColor.buttonColor,
                   shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(50)),
                   ),
@@ -107,7 +110,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: TextFormField(
-                    enabled: widget.friend == null,
+                    enabled: widget.friend == null || widget.friend!.email.isEmpty,
                     initialValue: widget.friend != null ? widget.friend!.email : '',
                     decoration: const InputDecoration(
                       border: InputBorder.none,
@@ -117,7 +120,9 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
                       labelText: 'Email',
                     ),
                     keyboardType: TextInputType.emailAddress,
-                    validator: validateEmail,
+                    validator: (val) {
+                      return validateEmail(val, strict: widget.friend == null);
+                    },
                     onSaved: (String? val) {
                       email = val;
                     },
@@ -131,7 +136,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
   }
 
   void validateFormAndAddFriend(User s) {
-    if(_formKey.currentState?.validate() ?? false){
+    if(_formKey.currentState?.validate() == true){
       _formKey.currentState?.save();
       if (email != null && name != null) {
         addFriend(email: email! ,name: name!, user: s);
@@ -140,13 +145,27 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
     }
   }
 
-  String? validateEmail(String? value) {
+  void validateFormAndUpdateFriend(Friend friend, User user) {
+    if(_formKey.currentState?.validate() == true){
+      _formKey.currentState?.save();
+      if (email != null) {
+        updateFriend(email: email!, friendId: friend.id, user: user);
+      }
+      Navigator.of(context).pop();
+    }
+  }
+
+  String? validateEmail(String? value, {bool strict = true}) {
     String pattern =
         r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
     RegExp regex = RegExp(pattern);
+    if((value == null || value.isEmpty) && strict)
+      return null;
     if (value == null || !regex.hasMatch(value))
       return 'Please enter valid email';
     else
       return null;
   }
+
+
 }

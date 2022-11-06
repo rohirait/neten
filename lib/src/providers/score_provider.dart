@@ -2,19 +2,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:netten/src/providers/friends_provider.dart';
-import 'package:netten/src/providers/top_level_providers.dart';
-
 import 'package:netten/src/models/score.dart';
 import '../models/friend.dart';
 import '../models/score_request.dart';
 import 'auth_provider.dart';
 
-final scoresProvider = StreamProvider.autoDispose((ref) {
-  final String? email = ref.read(authenticationProvider).getUser()?.email;
+final myScoresProvider = StreamProvider.autoDispose((ref) {
+  final User? user = ref.read(authenticationProvider).getUser();
   return FirebaseFirestore.instance
-      .collection('scores')
-      .where('you', isEqualTo: email)
+      .collection('users').doc(user?.uid).collection('myScores')
       .orderBy('date', descending: true)
       .snapshots()
       .map((snapshot) {
@@ -50,11 +46,10 @@ final scoreRequestProvider = StreamProvider.autoDispose((ref) {
     }).toList();
   });
 });
-
+//should be a streamProvider
 final friendsProvider = FutureProvider<List<Friend?>?>((ref) async {
-  final String? email = ref.read(authenticationProvider).getUser()?.email;
-  List<Friend?>? s = await getFriends(email: email);
-  return getFriends(email: email);
+  final User? user = ref.read(authenticationProvider).getUser();
+  return getFriends(user: user!);
 });
 
 Stream getScores(User? user) {
@@ -67,27 +62,42 @@ Stream getScores(User? user) {
 
 //todo way too many variables. Should be easier
 @override
-Future<List<String>> createScore({required DateTime date, required Score score, required String yourEmail}) async {
+Future<List<String>> createScore({required DateTime date, required Score score, required User user}) async {
   try {
-    DocumentReference ref1 = await FirebaseFirestore.instance.collection("scores").add({
-      'date': date,
-      'opponent': score.opponent,
-      'your_score': score.yourScore,
-      'opponent_score': score.opponentScore,
-      'you': yourEmail,
-      'created': FieldValue.serverTimestamp()
-    });
-    DocumentReference ref2 = await FirebaseFirestore.instance.collection("score_request").add({
+    DocumentReference ref = await FirebaseFirestore.instance
+        .collection("users").doc(user.uid).collection('myScores')
+        .add({
+          'date': date,
+          'opponent': score.opponent,
+          'your_score': score.yourScore,
+          'opponent_score': score.opponentScore,
+          'created': FieldValue.serverTimestamp(),
+          'friendId': score.friendId,
+          'opponentEmail': score.opponentEmail
+        });
+    //Todo this will change, because we only add a "Score" if both side accept
+    // DocumentReference ref1 = await FirebaseFirestore.instance.collection("scores").add({
+    //   'date': date,
+    //   'opponent': score.opponent,
+    //   'your_score': score.yourScore,
+    //   'opponent_score': score.opponentScore,
+    //   'you': email,
+    //   'created': FieldValue.serverTimestamp()
+    // });
+    //todo check if opponent is read somewhere
+    if(score.opponentEmail.isNotEmpty) {
+      DocumentReference ref2 = await FirebaseFirestore.instance.collection("score_request").add({
       'date': date,
       'opponent': score.opponentEmail,
       'your_score': score.opponentScore,
       'opponent_score': score.yourScore,
-      'you': yourEmail,
+      'you': user.email ?? '',
       'created': FieldValue.serverTimestamp(),
       'accepted': 'PENDING'
     });
+    }
 
-    return [ref1.id, ref2.id];
+    return ['Added'];
   } on FirebaseException catch (e) {
     throw Exception(e.toString());
   }
@@ -111,9 +121,9 @@ Future<void> denyScoreRequest(ScoreRequest scoreRequest) async {
 
 }
 
-Future<List<Friend?>?> getFriends({required String? email}) async {
+Future<List<Friend?>?> getFriends({required User user}) async {
   try {
-    var a = await FirebaseFirestore.instance.collection('friends').where('email', isEqualTo: email).get();
+    var a = await FirebaseFirestore.instance.collection('users').doc(user.uid).collection('myFriends').get();
     return a.docs.map((doc) {
       return Friend.fromMap(doc.data());
     }).toList();

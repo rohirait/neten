@@ -26,9 +26,8 @@ class SignIn extends ConsumerWidget {
                     style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8.0),
-                        ),
+                        ), backgroundColor: Colors.white,
                         shadowColor: Colors.black,
-                        primary: Colors.white,
                         elevation: 4,
                         textStyle: Theme.of(context).textTheme.bodyText2?.copyWith(color: Colors.black)),
                     onPressed: () async {

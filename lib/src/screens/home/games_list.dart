@@ -12,7 +12,7 @@ import 'package:netten/src/models/score_request.dart';
 class GamesList extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var user = ref.watch(scoresProvider);
+    var user = ref.watch(myScoresProvider);
     return user.when(
       loading: () => const CircularProgressIndicator(),
       error: (error, stack) => const Text('Oops'),
@@ -137,7 +137,7 @@ class ScoreRequestView extends StatelessWidget {
                             createScoreFromRequest(score, email);
                           },
                           style: ElevatedButton.styleFrom(
-                            primary: NetenColor.primaryColor
+                            backgroundColor: NetenColor.primaryColor
                           )
                         ),
                         SizedBox(width: 24),
@@ -145,7 +145,7 @@ class ScoreRequestView extends StatelessWidget {
                           denyScoreRequest(score);
                         },
                             style: ElevatedButton.styleFrom(
-                                primary: Colors.redAccent
+                                backgroundColor: Colors.redAccent
                             )),
                       ],
                     ),

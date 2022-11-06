@@ -12,6 +12,7 @@ class Score {
   String date;
   String opponentEmail;
   String? _fullName;
+  String friendId;
 
   Score(
       {required this.opponentScore,
@@ -19,15 +20,17 @@ class Score {
       required this.uid,
       required this.opponent,
       required this.date,
-      required this.opponentEmail});
+      required this.opponentEmail,
+      required this.friendId});
 
   Score.fromMap(Map<String, dynamic>? data)
       : opponentScore = data?['opponent_score'] ?? '',
         yourScore = data?['your_score'] ?? '',
         uid = data?['uid'] ?? '',
         opponent = data?['opponent'] ?? '',
-        date = data?['date'] != null ? readTimestamp(data!['date'].toDate()) : '' ,
+        date = data?['date'] != null ? readTimestamp(data!['date'].toDate()) : '',
         opponentEmail = data?['opponent_email'] ?? '',
+        friendId = data?['friendId'],
         id = data?['id'].toString();
 
   Score.fromSnapshot(DocumentSnapshot<dynamic> data)
@@ -36,6 +39,7 @@ class Score {
         yourScore = data.get('your_score') ?? '',
         opponent = data.get('opponent') ?? '',
         date = data.get('date') != null ? readTimestamp(data.get('date').toDate()) : '',
+        friendId = data.get('friendId') ?? '',
         opponentEmail = data.data()['opponent_email'] ?? '';
 
   // opponentEmail = data?.get('opponent_email') ?? '';
@@ -52,7 +56,6 @@ class Score {
     _fullName = value;
   }
 
-
   String? get fullName {
     return _fullName ?? 'Unknown';
   }
@@ -64,7 +67,8 @@ class Score {
         'uid': uid,
         'opponent': opponent,
         'date': date,
-        'opponent_email': opponentEmail
+        'opponent_email': opponentEmail,
+        'friendId': friendId
       };
 
   static String readTimestamp(DateTime timestamp) {

@@ -1,8 +1,9 @@
-import 'package:flutter/cupertino.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:netten/src/providers/friends_provider.dart';
 import 'package:netten/src/providers/score_provider.dart';
 import 'package:netten/src/widgets/gradient_text.dart';
 import 'package:netten/theme.dart';
@@ -28,6 +29,7 @@ class _AddGameScreenState extends State<AddGameScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.transparent,
@@ -79,9 +81,9 @@ class _AddGameScreenState extends State<AddGameScreen> {
                       flex: 1,
                       child: Consumer(
                         builder: (BuildContext context, WidgetRef ref, Widget? child) {
-                          return ref.watch(friendsProvider).when(
+                          return ref.watch(friendsStreamProvider).when(
                               data: (friends) {
-                                return friends!.isNotEmpty
+                                return friends.isNotEmpty
                                     ? Container(
                                         decoration: BoxDecoration(
                                             shape: BoxShape.rectangle,
@@ -94,7 +96,6 @@ class _AddGameScreenState extends State<AddGameScreen> {
                                               value: friend,
                                               underline: SizedBox.shrink(),
                                               onChanged: (value) {
-                                                print(value?.name ?? ' TEst');
                                                 friend = value;
                                                 setState(() {});
                                               },
@@ -102,7 +103,7 @@ class _AddGameScreenState extends State<AddGameScreen> {
                                                 return DropdownMenuItem(
                                                   value: friend,
                                                   child: Text(
-                                                    friend?.name ?? '',
+                                                    friend.name,
                                                   ),
                                                 );
                                               }).toList()),
@@ -114,6 +115,7 @@ class _AddGameScreenState extends State<AddGameScreen> {
                         },
                       ),
                     )
+
                   ]),
                   SizedBox(height: 24),
                   Center(child: Text('SETS')),
@@ -255,8 +257,6 @@ class _AddGameScreenState extends State<AddGameScreen> {
                           opponentGames.add(int.parse(opponentScoreController.text));
                           yourScoreController.clear();
                           opponentScoreController.clear();
-                          print(yourGames.toString());
-                          print(opponentGames.toString());
                           setState(() {});
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -276,18 +276,18 @@ class _AddGameScreenState extends State<AddGameScreen> {
                   SizedBox(height: 15),
                   Consumer(
                     builder: (BuildContext context, WidgetRef ref, Widget? child) {
-                      final String? email = ref.read(authenticationProvider).getUser()?.email;
+                      final User? user = ref.read(authenticationProvider).getUser();
                       return SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: () => saveMatch(email ?? ''),
+                          onPressed: () => saveMatch(user),
                           child: Padding(
                             padding: const EdgeInsets.symmetric(vertical: 8.0),
                             child:
                             Text('Save match', style: Theme.of(context).textTheme.bodyText1?.copyWith(color: Colors.white)),
                           ),
                           style: ElevatedButton.styleFrom(
-                            primary: NetenColor.buttonColor,
+                            backgroundColor: NetenColor.buttonColor,
                             shape: const RoundedRectangleBorder(
                               borderRadius: BorderRadius.all(Radius.circular(50)),
                             ),
@@ -319,7 +319,7 @@ class _AddGameScreenState extends State<AddGameScreen> {
                 ),
                 textButtonTheme: TextButtonThemeData(
                   style: TextButton.styleFrom(
-                    primary: NetenColor.blackText, // button text color
+                    foregroundColor: NetenColor.blackText, // button text color
                   ),
                 )),
             child: child!,
@@ -332,8 +332,8 @@ class _AddGameScreenState extends State<AddGameScreen> {
     }
   }
 
-  Future<void> saveMatch(String? email) async {
-    if (opponentGames.isEmpty || email == null || friend == null) {
+  Future<void> saveMatch(User? user) async {
+    if (opponentGames.isEmpty || user == null || friend == null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(friend == null ? "Missing opponent" : "Add at least one match"),
         duration: const Duration(seconds: 1),
@@ -359,7 +359,8 @@ class _AddGameScreenState extends State<AddGameScreen> {
       date: 'x',
       uid: '',
       opponent: friend?.name ?? '',
+      friendId: friend?.id ?? ''
     );
-    createScore(date: selectedDate, score: score, yourEmail: email).then((value) => Navigator.of(context).pop());
+    createScore(date: selectedDate, score: score, user: user).then((value) => Navigator.of(context).pop());
   }
 }
