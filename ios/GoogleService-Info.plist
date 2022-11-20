@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>22733820659-89r4jgksgoa7bgd3ll7ri5ei8o2frc0n.apps.googleusercontent.com</string>
+	<string>22733820659-gkpoonaq331ts7k90dd6obs0gl9pb12q.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.22733820659-89r4jgksgoa7bgd3ll7ri5ei8o2frc0n</string>
+	<string>com.googleusercontent.apps.22733820659-gkpoonaq331ts7k90dd6obs0gl9pb12q</string>
 	<key>ANDROID_CLIENT_ID</key>
 	<string>22733820659-3pac4j47fvn80h0innnl1jf3t39326b2.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
@@ -15,7 +15,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.monkeyred.netten</string>
+	<string>neten.neten.ee</string>
 	<key>PROJECT_ID</key>
 	<string>netten-258f8</string>
 	<key>STORAGE_BUCKET</key>
@@ -31,7 +31,7 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:22733820659:ios:61df25d570285e1df15d86</string>
+	<string>1:22733820659:ios:f49f430ab9a20740f15d86</string>
 	<key>DATABASE_URL</key>
 	<string>https://netten-258f8.firebaseio.com</string>
 </dict>
