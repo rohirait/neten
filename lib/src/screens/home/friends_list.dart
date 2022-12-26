@@ -11,8 +11,8 @@ import 'package:netten/theme.dart';
 class FriendsList extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var user = ref.watch(friendsStreamProvider);
-    return user.when(
+    var friendsList = ref.watch(friendsStreamProvider);
+    return friendsList.when(
       loading: () => const CircularProgressIndicator(),
       error: (error, stack) => const Text('Oops'),
       data: (friends) {

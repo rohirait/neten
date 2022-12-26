@@ -80,6 +80,8 @@ class Authentication {
       if (user != null)
         FirebaseFirestore.instance.collection('users').doc(user.uid).set(
             {'name': user.displayName, 'email': user.email, 'uid': user.uid, 'url': user.photoURL});
+      FirebaseFirestore.instance.collection('users').doc(user!.uid).collection('myFriends');
+      FirebaseFirestore.instance.collection('users').doc(user.uid).collection('myScores');
     } on FirebaseAuthException catch (e) {
       await showDialog(
         context: context,

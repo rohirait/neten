@@ -4,10 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:netten/src/models/score.dart';
 import 'package:netten/src/providers/auth_provider.dart';
 
-import '../models/friend.dart';
-import '../models/friend_request.dart';
+import 'package:netten/src/models/friend.dart';
+import 'package:netten/src/models/friend_request.dart';
 
-final StreamProvider<List<Friend>> friendsStreamProvider = StreamProvider((ref) {
+final  friendsStreamProvider = StreamProvider.autoDispose((ref) {
   final User? user = ref.read(authenticationProvider).getUser();
   return FirebaseFirestore.instance
       .collection('users')
@@ -15,7 +15,6 @@ final StreamProvider<List<Friend>> friendsStreamProvider = StreamProvider((ref) 
       .collection('myFriends')
       .snapshots()
       .map((snapshot) {
-    print(snapshot.toString());
     return snapshot.docs.map((doc) {
       return Friend.fromMap(doc.data());
     }).toList();
@@ -32,6 +31,19 @@ Future<bool> addFriendFromRequest(
   dbref1.update({'id': dbref1.id});
   await FirebaseFirestore.instance.collection("friend_request").doc(id).update({'status': 'ACCEPTED'});
   return true;
+}
+
+Future<Friend?> findUserFriendByEmail({required String email, required User user}) async {
+  return FirebaseFirestore.instance
+      .collection("users")
+      .doc(user.uid)
+      .collection('myFriends')
+      .limit(1)
+      .where('email', isEqualTo: email)
+      .get()
+      .then((QuerySnapshot<Map<String, dynamic>> value) {
+    return value.docs.isNotEmpty ? Friend.fromMap(value.docs.first.data()) : null;
+  });
 }
 
 Future<List<String>> addFriend(
@@ -106,7 +118,7 @@ void updateFriend({required String email, required String friendId, required Use
       .then((snapshot) {
     snapshot.docs.forEach((document) async {
       myScoresBatch.update(document.reference, {'opponentEmail': email});
-      Score score = Score.fromMap(document.data());
+      Score score = Score.fromMap(document.data(), document.id);
       FirebaseFirestore.instance.collection("score_request").add({
         'date': document.data()['date'],
         'opponent': email,
@@ -119,4 +131,16 @@ void updateFriend({required String email, required String friendId, required Use
     });
   });
   myScoresBatch.commit();
+}
+
+Future<List<Friend?>?> getFriends({required User user}) async {
+  try {
+    var a = await FirebaseFirestore.instance.collection('users').doc(user.uid).collection('myFriends').get();
+    return a.docs.map((doc) {
+      return Friend.fromMap(doc.data());
+    }).toList();
+  } on FirebaseException catch (e) {
+    print(e);
+  }
+  return null;
 }

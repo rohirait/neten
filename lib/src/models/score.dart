@@ -23,7 +23,7 @@ class Score {
       required this.opponentEmail,
       required this.friendId});
 
-  Score.fromMap(Map<String, dynamic>? data)
+  Score.fromMap(Map<String, dynamic>? data, String id)
       : opponentScore = data?['opponent_score'] ?? '',
         yourScore = data?['your_score'] ?? '',
         uid = data?['uid'] ?? '',
@@ -31,7 +31,7 @@ class Score {
         date = data?['date'] != null ? readTimestamp(data!['date'].toDate()) : '',
         opponentEmail = data?['opponent_email'] ?? '',
         friendId = data?['friendId'],
-        id = data?['id'].toString();
+        id = id.toString();
 
   Score.fromSnapshot(DocumentSnapshot<dynamic> data)
       : uid = data.reference.id,
@@ -49,7 +49,7 @@ class Score {
 
   @override
   Score parseFromMap(Map<String, dynamic> snapshot, String id) {
-    return Score.fromMap(snapshot);
+    return Score.fromMap(snapshot, id);
   }
 
   set fullName(String? value) {

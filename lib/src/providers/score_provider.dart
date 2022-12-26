@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:netten/src/models/score.dart';
+import 'package:netten/src/providers/friends_provider.dart';
 import '../models/friend.dart';
 import '../models/score_request.dart';
 import 'auth_provider.dart';
@@ -10,17 +11,29 @@ import 'auth_provider.dart';
 final myScoresProvider = StreamProvider.autoDispose((ref) {
   final User? user = ref.read(authenticationProvider).getUser();
   return FirebaseFirestore.instance
-      .collection('users').doc(user?.uid).collection('myScores')
+      .collection('users')
+      .doc(user?.uid)
+      .collection('myScores')
       .orderBy('date', descending: true)
       .snapshots()
       .map((snapshot) {
     return snapshot.docs.map((doc) {
-      Score score = Score.fromMap(doc.data());
+      Score score = Score.fromMap(doc.data(), doc.id);
       return score;
     }).toList();
   });
 });
 
+
+Future<bool> deleteScore(String userId, String scoreId) async {
+  print("user id is:"+userId);
+  print("Score id is: "+scoreId);
+  await FirebaseFirestore.instance
+      .collection('users')
+      .doc(userId)
+      .collection('myScores').doc(scoreId).delete();
+  return true;
+}
 final scoreRequestProvider = StreamProvider.autoDispose((ref) {
   final String? email = ref.read(authenticationProvider).getUser()?.email;
   final List<Friend?>? friends = ref.read(friendsProvider).value;
@@ -36,7 +49,7 @@ final scoreRequestProvider = StreamProvider.autoDispose((ref) {
       String name = scoreRequest.opponentEmail;
       if (friends != null) {
         for (Friend? f in friends) {
-          if(f?.email == scoreRequest.opponentEmail && f?.name != null){
+          if (f?.email == scoreRequest.opponentEmail && f?.name != null) {
             name = f!.name;
           }
         }
@@ -64,17 +77,16 @@ Stream getScores(User? user) {
 @override
 Future<List<String>> createScore({required DateTime date, required Score score, required User user}) async {
   try {
-    DocumentReference ref = await FirebaseFirestore.instance
-        .collection("users").doc(user.uid).collection('myScores')
-        .add({
-          'date': date,
-          'opponent': score.opponent,
-          'your_score': score.yourScore,
-          'opponent_score': score.opponentScore,
-          'created': FieldValue.serverTimestamp(),
-          'friendId': score.friendId,
-          'opponentEmail': score.opponentEmail
-        });
+    DocumentReference ref =
+        await FirebaseFirestore.instance.collection("users").doc(user.uid).collection('myScores').add({
+      'date': date,
+      'opponent': score.opponent,
+      'your_score': score.yourScore,
+      'opponent_score': score.opponentScore,
+      'created': FieldValue.serverTimestamp(),
+      'friendId': score.friendId,
+      'opponentEmail': score.opponentEmail
+    });
     //Todo this will change, because we only add a "Score" if both side accept
     // DocumentReference ref1 = await FirebaseFirestore.instance.collection("scores").add({
     //   'date': date,
@@ -85,16 +97,16 @@ Future<List<String>> createScore({required DateTime date, required Score score, 
     //   'created': FieldValue.serverTimestamp()
     // });
     //todo check if opponent is read somewhere
-    if(score.opponentEmail.isNotEmpty) {
+    if (score.opponentEmail.isNotEmpty) {
       DocumentReference ref2 = await FirebaseFirestore.instance.collection("score_request").add({
-      'date': date,
-      'opponent': score.opponentEmail,
-      'your_score': score.opponentScore,
-      'opponent_score': score.yourScore,
-      'you': user.email ?? '',
-      'created': FieldValue.serverTimestamp(),
-      'accepted': 'PENDING'
-    });
+        'date': date,
+        'opponent': score.opponentEmail,
+        'your_score': score.opponentScore,
+        'opponent_score': score.yourScore,
+        'you': user.email ?? '',
+        'created': FieldValue.serverTimestamp(),
+        'accepted': 'PENDING'
+      });
     }
 
     return ['Added'];
@@ -103,32 +115,32 @@ Future<List<String>> createScore({required DateTime date, required Score score, 
   }
 }
 
-Future<void> createScoreFromRequest(ScoreRequest scoreRequest, String email) async{
-   await FirebaseFirestore.instance.collection("scores").add({
+Future<void> createScoreFromRequest(ScoreRequest scoreRequest, User user) async {
+  //this is still correct as well
+  await FirebaseFirestore.instance.collection("scores").add({
     'date': DateFormat('dd.MM.yy').parse(scoreRequest.date),
     'opponent': scoreRequest.opponentEmail,
     'your_score': scoreRequest.opponentScore,
     'opponent_score': scoreRequest.yourScore,
-    'you': email,
+    'you': user.email,
     'created': FieldValue.serverTimestamp()
   });
 
-   await FirebaseFirestore.instance.collection('score_request').doc(scoreRequest.id).update({'accepted':'ACCEPTED'});
+  Friend? friend = await findUserFriendByEmail(email: scoreRequest.opponentEmail, user: user);
+
+  await FirebaseFirestore.instance.collection("users").doc(user.uid).collection('myScores').add({
+    'date': DateFormat('dd.MM.yy').parse(scoreRequest.date),
+    'opponent': scoreRequest.opponentEmail,
+    'your_score': scoreRequest.opponentScore,
+    'opponent_score': scoreRequest.yourScore,
+    'created': FieldValue.serverTimestamp(),
+    'friendId': friend != null ? friend.id : '',
+    'opponentEmail': scoreRequest.opponentEmail
+  });
+
+  await FirebaseFirestore.instance.collection('score_request').doc(scoreRequest.id).update({'accepted': 'ACCEPTED'});
 }
 
 Future<void> denyScoreRequest(ScoreRequest scoreRequest) async {
-  await FirebaseFirestore.instance.collection('score_request').doc(scoreRequest.id).update({'accepted':'DENIED'});
-
-}
-
-Future<List<Friend?>?> getFriends({required User user}) async {
-  try {
-    var a = await FirebaseFirestore.instance.collection('users').doc(user.uid).collection('myFriends').get();
-    return a.docs.map((doc) {
-      return Friend.fromMap(doc.data());
-    }).toList();
-  } on FirebaseException catch (e) {
-    print(e);
-  }
-  return null;
+  await FirebaseFirestore.instance.collection('score_request').doc(scoreRequest.id).update({'accepted': 'DENIED'});
 }
