@@ -12,9 +12,13 @@ import 'package:netten/src/models/score.dart';
 import 'package:netten/src/providers/auth_provider.dart';
 
 class AddGameScreen extends StatefulWidget {
+  const AddGameScreen({Key? key, this.score}) : super(key: key);
+  final Score? score;
+
   @override
   State<AddGameScreen> createState() => _AddGameScreenState();
 }
+
 //todo Rait refactor by a lot
 class _AddGameScreenState extends State<AddGameScreen> {
   final _scrollController = ScrollController();
@@ -23,13 +27,22 @@ class _AddGameScreenState extends State<AddGameScreen> {
   Friend? friend;
   List<int> yourGames = <int>[];
   List<int> opponentGames = <int>[];
+  String? comment;
 
   final TextEditingController yourScoreController = TextEditingController();
   final TextEditingController opponentScoreController = TextEditingController();
 
+  void initState() {
+    if (widget.score != null) {
+      print("Got score");
+      yourGames = widget.score!.mySets ?? [];
+      opponentGames = widget.score!.opponentSets ?? [];
+    }
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.transparent,
@@ -52,13 +65,13 @@ class _AddGameScreenState extends State<AddGameScreen> {
                           style: Theme.of(context).textTheme.headline2,
                           gradient: LinearGradient(colors: [NetenColor.primaryColor, NetenColor.secondaryColor]))),
                   SizedBox(height: 8),
-                  Text('Add game', style: Theme.of(context).textTheme.bodyText1),
+                  Text(widget.score != null ? 'Game' : 'Add game', style: Theme.of(context).textTheme.bodyText1),
                   SizedBox(height: 15),
                   Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                     Flexible(
                       flex: 1,
                       child: InkWell(
-                        onTap: () => _selectDate(context),
+                        onTap: () => widget.score != null ? null : _selectDate(context),
                         child: Container(
                             decoration: BoxDecoration(
                                 shape: BoxShape.rectangle,
@@ -91,22 +104,27 @@ class _AddGameScreenState extends State<AddGameScreen> {
                                             border: Border.all(color: NetenColor.greyBorder)),
                                         child: Padding(
                                           padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                          child: DropdownButton<Friend>(
-                                              hint: Text('Opponent'),
-                                              value: friend,
-                                              underline: SizedBox.shrink(),
-                                              onChanged: (value) {
-                                                friend = value;
-                                                setState(() {});
-                                              },
-                                              items: friends.map((friend) {
-                                                return DropdownMenuItem(
+                                          child: widget.score != null
+                                              ? Padding(
+                                                  padding: const EdgeInsets.all(8.0),
+                                                  child: Text(widget.score?.opponent ?? ''),
+                                                )
+                                              : DropdownButton<Friend>(
+                                                  hint: Text('Opponent'),
                                                   value: friend,
-                                                  child: Text(
-                                                    friend.name,
-                                                  ),
-                                                );
-                                              }).toList()),
+                                                  underline: SizedBox.shrink(),
+                                                  onChanged: (value) {
+                                                    friend = value;
+                                                    setState(() {});
+                                                  },
+                                                  items: friends.map((friend) {
+                                                    return DropdownMenuItem(
+                                                      value: friend,
+                                                      child: Text(
+                                                        friend.name,
+                                                      ),
+                                                    );
+                                                  }).toList()),
                                         ))
                                     : SizedBox.shrink();
                               },
@@ -115,10 +133,25 @@ class _AddGameScreenState extends State<AddGameScreen> {
                         },
                       ),
                     )
-
                   ]),
+                  SizedBox(height: 15),
+                  TextFormField(
+                    enabled: widget.score == null,
+                    initialValue: widget.score == null ? '' : widget.score?.comment ?? '',
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(),
+                      labelText: 'Comment',
+                    ),
+                    onChanged: (String? val){
+                      comment = val;
+                    },
+                  ),
                   SizedBox(height: 24),
+
                   Center(child: Text('SETS')),
+                  if (widget.score != null) ...[Center(child: Text('Your scores are up and opponent scores are down'))],
                   SizedBox(height: 24),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -128,62 +161,66 @@ class _AddGameScreenState extends State<AddGameScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Row(children: [
-                              SizedBox(width: 50, child: Text('YOU', style: Theme.of(context).textTheme.subtitle1)),
-                              SizedBox(width: 14),
-                              Container(
-                                  height: 55,
-                                  width: 55,
-                                  decoration: BoxDecoration(
-                                      border: Border.all(color: NetenColor.lightGreyBorder),
-                                      borderRadius: BorderRadius.all(Radius.circular(4)),
-                                      color: Colors.white),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: TextField(
-                                        controller: yourScoreController,
-                                        style: Theme.of(context).textTheme.bodyText1?.copyWith(fontSize: 26),
-                                        decoration: InputDecoration(
-                                          border: InputBorder.none,
-                                        ),
-                                        keyboardType: TextInputType.number,
-                                        inputFormatters: [
-                                          LengthLimitingTextInputFormatter(2),
-                                          FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
-                                        ]),
-                                  ))
-                            ]),
+                            if (widget.score == null)
+                              Row(children: [
+                                SizedBox(width: 50, child: Text('YOU', style: Theme.of(context).textTheme.subtitle1)),
+                                SizedBox(width: 14),
+                                Container(
+                                    height: 55,
+                                    width: 55,
+                                    decoration: BoxDecoration(
+                                        border: Border.all(color: NetenColor.lightGreyBorder),
+                                        borderRadius: BorderRadius.all(Radius.circular(4)),
+                                        color: Colors.white),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: TextField(
+                                          controller: yourScoreController,
+                                          style: Theme.of(context).textTheme.bodyText1?.copyWith(fontSize: 26),
+                                          decoration: InputDecoration(
+                                            border: InputBorder.none,
+                                          ),
+                                          keyboardType: TextInputType.number,
+                                          inputFormatters: [
+                                            LengthLimitingTextInputFormatter(2),
+                                            FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                                          ]),
+                                    ))
+                              ]),
                             SizedBox(height: 8),
-                            Row(
-                              children: [
-                                SizedBox(width: 90),
-                                Text((opponentGames.length + 1).toString(), style: Theme.of(context).textTheme.caption)
-                              ],
-                            ),
+                            if (widget.score == null)
+                              Row(
+                                children: [
+                                  SizedBox(width: 90),
+                                  Text((opponentGames.length + 1).toString(),
+                                      style: Theme.of(context).textTheme.caption)
+                                ],
+                              ),
                             SizedBox(height: 8),
-                            Row(children: [
-                              SizedBox(width: 50, child: Text('OPP.', style: Theme.of(context).textTheme.subtitle1)),
-                              SizedBox(width: 14),
-                              Container(
-                                  height: 55,
-                                  width: 55,
-                                  decoration: BoxDecoration(
-                                      border: Border.all(color: NetenColor.lightGreyBorder), color: Colors.white),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: TextField(
-                                        controller: opponentScoreController,
-                                        style: Theme.of(context).textTheme.bodyText1?.copyWith(fontSize: 26),
-                                        decoration: InputDecoration(
-                                          border: InputBorder.none,
-                                        ),
-                                        keyboardType: TextInputType.number,
-                                        inputFormatters: [
-                                          LengthLimitingTextInputFormatter(2),
-                                          FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
-                                        ]),
-                                  ))
-                            ]),
+                            if (widget.score == null)
+                              Row(children: [
+                                SizedBox(width: 50, child: Text('OPP.', style: Theme.of(context).textTheme.subtitle1)),
+                                SizedBox(width: 14),
+                                Container(
+                                    height: 55,
+                                    width: 55,
+                                    decoration: BoxDecoration(
+                                        border: Border.all(color: NetenColor.lightGreyBorder), color: Colors.white),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: TextField(
+                                          controller: opponentScoreController,
+                                          style: Theme.of(context).textTheme.bodyText1?.copyWith(fontSize: 26),
+                                          decoration: InputDecoration(
+                                            border: InputBorder.none,
+                                          ),
+                                          keyboardType: TextInputType.number,
+                                          inputFormatters: [
+                                            LengthLimitingTextInputFormatter(2),
+                                            FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                                          ]),
+                                    ))
+                              ]),
                           ],
                         ),
                       ),
@@ -243,59 +280,62 @@ class _AddGameScreenState extends State<AddGameScreen> {
                       )
                     ],
                   ),
+
                   SizedBox(height: 40),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      style: Theme.of(context)
-                          .elevatedButtonTheme
-                          .style
-                          ?.copyWith(backgroundColor: MaterialStateProperty.all(Colors.white)),
-                      onPressed: () {
-                        if (yourScoreController.text.isNotEmpty && opponentScoreController.text.isNotEmpty) {
-                          yourGames.add(int.parse(yourScoreController.text));
-                          opponentGames.add(int.parse(opponentScoreController.text));
-                          yourScoreController.clear();
-                          opponentScoreController.clear();
-                          setState(() {});
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content: const Text('Missing a score'),
-                            duration: const Duration(seconds: 1),
-                          ));
-                          setState(() {});
-                        }
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: Text('Add set',
-                            style: Theme.of(context).textTheme.bodyText1?.copyWith(color: NetenColor.primaryColor)),
+                  if (widget.score == null) ...[
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: Theme.of(context)
+                            .elevatedButtonTheme
+                            .style
+                            ?.copyWith(backgroundColor: MaterialStateProperty.all(Colors.white)),
+                        onPressed: () {
+                          if (yourScoreController.text.isNotEmpty && opponentScoreController.text.isNotEmpty) {
+                            yourGames.add(int.parse(yourScoreController.text));
+                            opponentGames.add(int.parse(opponentScoreController.text));
+                            yourScoreController.clear();
+                            opponentScoreController.clear();
+                            setState(() {});
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: const Text('Missing a score'),
+                              duration: const Duration(seconds: 1),
+                            ));
+                            setState(() {});
+                          }
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: Text('Add set',
+                              style: Theme.of(context).textTheme.bodyText1?.copyWith(color: NetenColor.primaryColor)),
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(height: 15),
-                  Consumer(
-                    builder: (BuildContext context, WidgetRef ref, Widget? child) {
-                      final User? user = ref.read(authenticationProvider).getUser();
-                      return SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: () => saveMatch(user),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8.0),
-                            child:
-                            Text('Save match', style: Theme.of(context).textTheme.bodyText1?.copyWith(color: Colors.white)),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: NetenColor.buttonColor,
-                            shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(50)),
+                    SizedBox(height: 15),
+                    Consumer(
+                      builder: (BuildContext context, WidgetRef ref, Widget? child) {
+                        final User? user = ref.read(authenticationProvider).getUser();
+                        return SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: () => saveMatch(user),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 8.0),
+                              child: Text('Save match',
+                                  style: Theme.of(context).textTheme.bodyText1?.copyWith(color: Colors.white)),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: NetenColor.buttonColor,
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(50)),
+                              ),
                             ),
                           ),
-                        ),
-                      );
-                    },
-                  ),
+                        );
+                      },
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -353,14 +393,16 @@ class _AddGameScreenState extends State<AddGameScreen> {
       }
     }
     Score score = Score(
-      opponentEmail: friend?.email ?? '',
-      yourScore: yourScore,
-      opponentScore: opponentScore,
-      date: 'x',
-      uid: '',
-      opponent: friend?.name ?? '',
-      friendId: friend?.id ?? ''
-    );
+        opponentEmail: friend?.email ?? '',
+        yourScore: yourScore,
+        opponentScore: opponentScore,
+        date: 'x',
+        uid: '',
+        mySets: yourGames,
+        opponentSets: opponentGames,
+        opponent: friend?.name ?? '',
+        comment: comment,
+        friendId: friend?.id ?? '');
     createScore(date: selectedDate, score: score, user: user).then((value) => Navigator.of(context).pop());
   }
 }

@@ -15,11 +15,27 @@
       },
       "oauth_client": [
         {
+          "client_id": "22733820659-3pac4j47fvn80h0innnl1jf3t39326b2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.monkeyred.netten",
+            "certificate_hash": "818bd178e0bdcab8a33b55bd3702ea6cb4558475"
+          }
+        },
+        {
           "client_id": "22733820659-c01g329pism0robudru2hle0vca33431.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.monkeyred.netten",
             "certificate_hash": "78c6a5aec1646f8ba53a093cb21909a6b669f52a"
+          }
+        },
+        {
+          "client_id": "22733820659-duvhm2i8ngmvujgjtrh2gjg37f8akfpb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.monkeyred.netten",
+            "certificate_hash": "c664eb9dccddc91065f5579331a344c22f9cd60f"
           }
         },
         {
@@ -38,6 +54,13 @@
             {
               "client_id": "22733820659-jt5o01ive3937t8dvuu5nph1kapojfns.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "22733820659-89r4jgksgoa7bgd3ll7ri5ei8o2frc0n.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.monkeyred.netten"
+              }
             }
           ]
         }

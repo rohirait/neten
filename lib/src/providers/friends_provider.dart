@@ -62,6 +62,7 @@ Future<List<String>> addFriend(
       'recipient_name': name,
       'sender_uid': user?.uid,
       'sender_name': user?.displayName,
+      'created': FieldValue.serverTimestamp(),
       'status': "PENDING"
     });
   return [dbref1.id];
@@ -71,6 +72,27 @@ Future<bool> denyRequest({required String id}) async {
   await FirebaseFirestore.instance.collection("friend_request").doc(id).update({'status': 'DENIED'});
 
   return true;
+}
+
+Future<bool> deleteFriend(User user, String friendId, String email) async {
+
+
+  await FirebaseFirestore.instance
+      .collection('users')
+      .doc(user.uid)
+      .collection('myFriends').doc(friendId).delete();
+
+  QuerySnapshot<Map<String, dynamic>> docs = await FirebaseFirestore.instance
+      .collection('friend_request')
+      .where('recipient_email', isEqualTo: email)
+      .where('email', isEqualTo: user.email).get();
+
+  for (var doc in docs.docs) {
+    await doc.reference.delete();
+  }
+  return true;
+
+
 }
 
 final friendRequestProvider = StreamProvider.autoDispose((ref) {

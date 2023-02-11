@@ -7,7 +7,8 @@ class ScoreRequest {
   String opponentEmail;
   String date;
   String? opponentName;
-
+  List<int>? mySets;
+  List<int>? opponentSets;
 
 
   ScoreRequest({required this.opponentScore,
@@ -21,5 +22,7 @@ class ScoreRequest {
         opponentScore = data?['your_score'] ?? '',
         yourScore = data?['opponent_score'] ?? '',
         opponentEmail = data?['you'] ?? '',
+        mySets = List.castFrom(data?['my_sets'] as List? ?? []),
+        opponentSets = List.castFrom(data?['opponent_sets']  as List? ?? []),
         date = data?['date'] != null ? readTimestamp(data!['date'].toDate()) : '' ;
 }

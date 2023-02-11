@@ -13,6 +13,9 @@ class Score {
   String opponentEmail;
   String? _fullName;
   String friendId;
+  List<int>? mySets;
+  List<int>? opponentSets;
+  String? comment;
 
   Score(
       {required this.opponentScore,
@@ -21,7 +24,10 @@ class Score {
       required this.opponent,
       required this.date,
       required this.opponentEmail,
-      required this.friendId});
+      required this.friendId,
+      this.mySets,
+      this.opponentSets,
+      this.comment});
 
   Score.fromMap(Map<String, dynamic>? data, String id)
       : opponentScore = data?['opponent_score'] ?? '',
@@ -31,6 +37,9 @@ class Score {
         date = data?['date'] != null ? readTimestamp(data!['date'].toDate()) : '',
         opponentEmail = data?['opponent_email'] ?? '',
         friendId = data?['friendId'],
+        mySets = List.castFrom(data?['my_sets'] as List? ?? []),
+        opponentSets = List.castFrom(data?['opponent_sets']  as List? ?? []),
+        comment = data?['comment'],
         id = id.toString();
 
   Score.fromSnapshot(DocumentSnapshot<dynamic> data)
@@ -40,6 +49,9 @@ class Score {
         opponent = data.get('opponent') ?? '',
         date = data.get('date') != null ? readTimestamp(data.get('date').toDate()) : '',
         friendId = data.get('friendId') ?? '',
+        mySets = data.get('my_sets') ?? [],
+        opponentSets = data.get('opponent_sets') ?? [],
+        comment = data.get('comment') ?? '',
         opponentEmail = data.data()['opponent_email'] ?? '';
 
   // opponentEmail = data?.get('opponent_email') ?? '';

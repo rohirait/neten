@@ -1,7 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:netten/src/models/score.dart';
 import 'package:netten/src/providers/friends_provider.dart';
+import 'package:netten/src/providers/score_provider.dart';
+import 'package:netten/src/screens/home/games_list.dart';
 
 import '../../../theme.dart';
 import '../../models/friend.dart';
@@ -9,11 +12,12 @@ import '../../providers/auth_provider.dart';
 import '../../widgets/gradient_text.dart';
 
 class AddFriendScreen extends StatefulWidget {
-  const AddFriendScreen({Key? key,  this.friend}) : super(key: key);
+  const AddFriendScreen({Key? key, this.friend, this.user}) : super(key: key);
 
   @override
   State<AddFriendScreen> createState() => _AddFriendScreenState();
   final Friend? friend;
+  final User? user;
 }
 
 class _AddFriendScreenState extends State<AddFriendScreen> {
@@ -31,35 +35,37 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
           elevation: 0.0,
         ),
         backgroundColor: NetenColor.backgroundColor,
-        bottomNavigationBar: (widget.friend == null || widget.friend!.email.isEmpty) ? Consumer(
-          builder: (BuildContext context, WidgetRef ref, Widget? child) {
-            final User? user = ref.read(authenticationProvider).getUser() ;
-            return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ElevatedButton(
-                onPressed: () {
-                  if(user != null && widget.friend != null){
-                    validateFormAndUpdateFriend(widget.friend!, user);
-
-                  } else if (user != null) {
-                    validateFormAndAddFriend(user);
-                  };
+        bottomNavigationBar: (widget.friend == null || widget.friend!.email.isEmpty)
+            ? Consumer(
+                builder: (BuildContext context, WidgetRef ref, Widget? child) {
+                  final User? user = ref.read(authenticationProvider).getUser();
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        if (user != null && widget.friend != null) {
+                          validateFormAndUpdateFriend(widget.friend!, user);
+                        } else if (user != null) {
+                          validateFormAndAddFriend(user);
+                        }
+                        ;
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Text('Add friend',
+                            style: Theme.of(context).textTheme.bodyText1?.copyWith(color: Colors.white)),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: NetenColor.buttonColor,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(50)),
+                        ),
+                      ),
+                    ),
+                  );
                 },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child:
-                      Text('Add friend', style: Theme.of(context).textTheme.bodyText1?.copyWith(color: Colors.white)),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: NetenColor.buttonColor,
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(50)),
-                  ),
-                ),
-              ),
-            );
-          },
-        ) : null,
+              )
+            : null,
         body: SafeArea(
             child: SingleChildScrollView(
                 child: Form(
@@ -129,24 +135,38 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
                   ),
                 ),
               ),
-
+              if (widget.friend != null && widget.user != null)
+                StreamBuilder(
+                  stream: friendScores(widget.friend!, widget.user!),
+                  builder: (BuildContext context, AsyncSnapshot<List<Score>> snapshot) {
+                    if (snapshot.data != null)
+                      return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                        SizedBox(height: 16),
+                        Text('Scores'),
+                        SizedBox(height: 16),
+                        for (Score score in snapshot.data!) ...[ScoreView(score: score, user: widget.user!)]
+                      ]);
+                    else
+                      return SizedBox.shrink();
+                  },
+                )
             ]),
           ),
         ))));
   }
 
   void validateFormAndAddFriend(User s) {
-    if(_formKey.currentState?.validate() == true){
+    if (_formKey.currentState?.validate() == true) {
       _formKey.currentState?.save();
       if (email != null && name != null) {
-        addFriend(email: email! ,name: name!, user: s);
+        addFriend(email: email!, name: name!, user: s);
       }
       Navigator.of(context).pop();
     }
   }
 
   void validateFormAndUpdateFriend(Friend friend, User user) {
-    if(_formKey.currentState?.validate() == true){
+    if (_formKey.currentState?.validate() == true) {
       _formKey.currentState?.save();
       if (email != null) {
         updateFriend(email: email!, friendId: friend.id, user: user);
@@ -159,13 +179,10 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
     String pattern =
         r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
     RegExp regex = RegExp(pattern);
-    if((value == null || value.isEmpty) && strict)
-      return null;
+    if ((value == null || value.isEmpty) && strict) return null;
     if (value == null || !regex.hasMatch(value))
       return 'Please enter valid email';
     else
       return null;
   }
-
-
 }

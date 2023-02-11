@@ -25,19 +25,31 @@ final myScoresProvider = StreamProvider.autoDispose((ref) {
 });
 
 
-Future<bool> deleteScore(String userId, String scoreId) async {
-  print("user id is:"+userId);
-  print("Score id is: "+scoreId);
-  await FirebaseFirestore.instance
+
+Stream<List<Score>> friendScores(Friend friend, User user){
+  return FirebaseFirestore.instance
       .collection('users')
-      .doc(userId)
-      .collection('myScores').doc(scoreId).delete();
+      .doc(user.uid)
+      .collection('myScores')
+      .where('friendId', isEqualTo: friend.id)
+      .snapshots()
+      .map((snapshot) {
+    return snapshot.docs.map((doc) {
+      Score score = Score.fromMap(doc.data(), doc.id);
+      return score;
+    }).toList();
+  });
+
+}
+
+Future<bool> deleteScore(String userId, String scoreId) async {
+  await FirebaseFirestore.instance.collection('users').doc(userId).collection('myScores').doc(scoreId).delete();
   return true;
 }
+
 final scoreRequestProvider = StreamProvider.autoDispose((ref) {
   final String? email = ref.read(authenticationProvider).getUser()?.email;
-  final List<Friend?>? friends = ref.read(friendsProvider).value;
-
+  List<Friend?>? friends = ref.watch(friendsProvider).value;
   return FirebaseFirestore.instance
       .collection('score_request')
       .where('opponent', isEqualTo: email)
@@ -47,6 +59,7 @@ final scoreRequestProvider = StreamProvider.autoDispose((ref) {
     return snapshot.docs.map((doc) {
       ScoreRequest scoreRequest = ScoreRequest.fromMap(doc.data(), id: doc.id);
       String name = scoreRequest.opponentEmail;
+
       if (friends != null) {
         for (Friend? f in friends) {
           if (f?.email == scoreRequest.opponentEmail && f?.name != null) {
@@ -83,9 +96,12 @@ Future<List<String>> createScore({required DateTime date, required Score score, 
       'opponent': score.opponent,
       'your_score': score.yourScore,
       'opponent_score': score.opponentScore,
+      'opponent_sets': score.opponentSets,
+      'my_sets': score.mySets,
       'created': FieldValue.serverTimestamp(),
       'friendId': score.friendId,
-      'opponentEmail': score.opponentEmail
+      'opponentEmail': score.opponentEmail,
+          'comment': score.comment
     });
     //Todo this will change, because we only add a "Score" if both side accept
     // DocumentReference ref1 = await FirebaseFirestore.instance.collection("scores").add({
@@ -103,6 +119,8 @@ Future<List<String>> createScore({required DateTime date, required Score score, 
         'opponent': score.opponentEmail,
         'your_score': score.opponentScore,
         'opponent_score': score.yourScore,
+        'opponent_sets': score.mySets,
+        'my_sets': score.opponentSets,
         'you': user.email ?? '',
         'created': FieldValue.serverTimestamp(),
         'accepted': 'PENDING'
@@ -130,9 +148,11 @@ Future<void> createScoreFromRequest(ScoreRequest scoreRequest, User user) async 
 
   await FirebaseFirestore.instance.collection("users").doc(user.uid).collection('myScores').add({
     'date': DateFormat('dd.MM.yy').parse(scoreRequest.date),
-    'opponent': scoreRequest.opponentEmail,
+    'opponent': scoreRequest.opponentName,
     'your_score': scoreRequest.opponentScore,
     'opponent_score': scoreRequest.yourScore,
+    'opponent_sets': scoreRequest.opponentSets,
+    'my_sets': scoreRequest.mySets,
     'created': FieldValue.serverTimestamp(),
     'friendId': friend != null ? friend.id : '',
     'opponentEmail': scoreRequest.opponentEmail
