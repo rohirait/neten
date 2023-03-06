@@ -18,11 +18,3 @@ final databaseProvider = Provider.autoDispose<FirestoreDatabase?>((ref) {
   return null;
 });
 
-
-
-final loggerProvider = Provider<Logger>((ref) => Logger(
-  printer: PrettyPrinter(
-    methodCount: 1,
-    printEmojis: false,
-  ),
-));

@@ -34,7 +34,6 @@ class _AddGameScreenState extends State<AddGameScreen> {
 
   void initState() {
     if (widget.score != null) {
-      print("Got score");
       yourGames = widget.score!.mySets ?? [];
       opponentGames = widget.score!.opponentSets ?? [];
     }

@@ -8,6 +8,7 @@ import 'package:netten/src/screens/game/add_game.dart';
 
 import 'package:netten/theme.dart';
 import '../../widgets/gradient_text.dart';
+import '../settings/settings_screen.dart';
 import 'friends_list.dart';
 import 'games_list.dart';
 
@@ -71,13 +72,20 @@ class _HomeScreenState extends State<HomeScreen> {
       0: [
         Consumer(builder: (BuildContext context, WidgetRef ref, Widget? child) {
           return ref.read(authenticationProvider).getUser()?.photoURL != null
-              ? Padding(
-                  padding: const EdgeInsets.all(15.0),
-                  child: CircleAvatar(
-                    radius: 60,
-                    backgroundImage: NetworkImage(ref.read(authenticationProvider).getUser()!.photoURL!),
+              ? InkWell(
+                onTap: () {
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+                    return SettingsScreen(uid: ref.read(authenticationProvider).getUser()!.uid);
+                  }));
+                },
+                child: Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: CircleAvatar(
+                      radius: 60,
+                      backgroundImage: NetworkImage(ref.read(authenticationProvider).getUser()!.photoURL!),
+                    ),
                   ),
-                )
+              )
               : SizedBox.shrink();
         }),
         Consumer(
