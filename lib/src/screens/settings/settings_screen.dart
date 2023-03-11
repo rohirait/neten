@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:netten/theme.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -6,10 +7,11 @@ import 'package:url_launcher/url_launcher_string.dart';
 import '../../providers/auth_provider.dart';
 
 class SettingsScreen extends StatelessWidget {
-  SettingsScreen({Key? key, required this.uid}) : super(key: key);
-  final String uid;
+  SettingsScreen({Key? key, required this.user}) : super(key: key);
+
   final String privacyUrl = 'https://neten.ee/privacy.html';
   final String termsUrl = 'https://neten.ee/terms.html';
+  final User user;
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +31,8 @@ class SettingsScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Center(child: Text('Your registered email is: \n'+user.email!)),
+                  SizedBox(height: 24),
                   SizedBox(
                     width: double.infinity,
                     child: InkWell(
@@ -75,8 +79,7 @@ class SettingsScreen extends StatelessWidget {
                                     content: SingleChildScrollView(
                                       child: ListBody(
                                         children: const <Widget>[
-                                          Text(
-                                              'Are you sure you want to delete your profile?'),
+                                          Text('Are you sure you want to delete your profile?'),
                                           Text('This action is permanent!'),
                                           Text('Please allow 1 week for deletion request to be processed')
                                         ],
@@ -88,20 +91,17 @@ class SettingsScreen extends StatelessWidget {
                                           onPressed: () {
                                             Navigator.of(context).pop();
                                           },
-                                          child: Text('Cancel',
-                                              style: TextStyle(color: Colors.black))),
+                                          child: Text('Cancel', style: TextStyle(color: Colors.black))),
                                       TextButton(
-                                        child: Text('Delete my profile',
-                                            style: TextStyle(color: Colors.black)),
+                                        child: Text('Delete my profile', style: TextStyle(color: Colors.black)),
                                         onPressed: () {
-                                          deleteUser(uid);
+                                          deleteUser(user.uid);
                                           Navigator.of(context).pop();
                                         },
                                       ),
                                     ],
                                   );
                                 });
-
                           }))
                 ]),
           ),

@@ -73,19 +73,25 @@ class _HomeScreenState extends State<HomeScreen> {
         Consumer(builder: (BuildContext context, WidgetRef ref, Widget? child) {
           return ref.read(authenticationProvider).getUser()?.photoURL != null
               ? InkWell(
-                onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-                    return SettingsScreen(uid: ref.read(authenticationProvider).getUser()!.uid);
-                  }));
-                },
-                child: Padding(
-                    padding: const EdgeInsets.all(15.0),
-                    child: CircleAvatar(
-                      radius: 60,
-                      backgroundImage: NetworkImage(ref.read(authenticationProvider).getUser()!.photoURL!),
-                    ),
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+                      return SettingsScreen(user: ref.read(authenticationProvider).getUser()!);
+                    }));
+                  },
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(15.0),
+                        child: CircleAvatar(
+                          radius: 60,
+                          backgroundImage: NetworkImage(ref.read(authenticationProvider).getUser()!.photoURL!),
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      Text('Settings')
+                    ],
                   ),
-              )
+                )
               : SizedBox.shrink();
         }),
         Consumer(
