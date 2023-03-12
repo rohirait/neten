@@ -1,4 +1,4 @@
-# netten
+export PATH="$PATH:/Users/raitrohi/development/flutter/bin"# netten
 
 A new Flutter application.
 

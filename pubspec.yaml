@@ -20,20 +20,19 @@ dependencies:
   flutter:
     sdk: flutter
   firebase_auth: ^4.2.6
-  google_sign_in: ^5.2.1
+  google_sign_in: ^6.0.2
   intl: ^0.17.0
   firebase_messaging: ^14.2.2
   riverpod: ^2.0.0-dev.5
   sqflite: ^2.0.0+3
   path_provider: ^2.0.2
-  flutterfire_ui: ^0.4.3+20
   cloud_firestore: ^4.3.2
   shared_preferences: ^2.0.13
   logger: ^1.1.0
   flutter_riverpod: ^2.0.0-dev.5
   firebase_core: ^2.5.0
-  flutter_facebook_auth: ^4.4.0
-  sign_in_with_apple: ^3.0.0
+  flutter_facebook_auth: ^5.0.8
+  sign_in_with_apple: ^4.3.0
   crypto: ^3.0.1
   flutter_slidable: ^2.0.0
   url_launcher: ^6.1.10
