@@ -92,7 +92,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                 )
-              : SizedBox.shrink();
+              : InkWell(
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+                      return SettingsScreen(user: ref.read(authenticationProvider).getUser()!);
+                    }));
+                  },
+                  child: Text('Settings'));
         }),
         Consumer(
           builder: (BuildContext context, WidgetRef ref, Widget? child) {
