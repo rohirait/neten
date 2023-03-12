@@ -86,14 +86,16 @@ class SignIn extends ConsumerWidget {
                             height: 18.0,
                           ),
                           const SizedBox(width: 15),
-                          Text('Continue with Facebook',
-                              style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.white,
-                                  letterSpacing: 0.25,
-                                  height: 1.2,
-                                  fontFamily: 'Roboto',
-                                  fontWeight: FontWeight.w500))
+                          Expanded(
+                            child: Text('Facebook',
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.white,
+                                    letterSpacing: 0.25,
+                                    height: 1.2,
+                                    fontFamily: 'Roboto',
+                                    fontWeight: FontWeight.w500)),
+                          )
                         ],
                       ),
                     )),
@@ -114,7 +116,7 @@ class SignIn extends ConsumerWidget {
                       onPressed: () async {
                         ref
                             .watch(authenticationProvider)
-                            .signInWithFacebook(context)
+                            .signInWithApple(context)
                             .onError((error, stackTrace) => throw Exception(error.toString()));
                       },
                       child: Padding(

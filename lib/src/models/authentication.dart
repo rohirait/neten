@@ -148,7 +148,7 @@ class Authentication {
     return digest.toString();
   }
 
-  Future<UserCredential> signInWithApple() async {
+  Future<void> signInWithApple(BuildContext context) async {
     // To prevent replay attacks with the credential returned from Apple, we
     // include a nonce in the credential request. When signing in with
     // Firebase, the nonce in the id token returned by Apple, is expected to
@@ -173,7 +173,29 @@ class Authentication {
 
     // Sign in the user with Firebase. If the nonce we generated earlier does
     // not match the nonce in `appleCredential.identityToken`, sign in will fail.
-    return await FirebaseAuth.instance.signInWithCredential(oauthCredential);
+    try {
+      User? user = (await _auth.signInWithCredential(oauthCredential)).user;
+      if (user != null)
+        FirebaseFirestore.instance.collection('users').doc(user.uid).set(
+            {'name': user.displayName, 'email': user.email, 'uid': user.uid, 'url': user.photoURL});
+      FirebaseFirestore.instance.collection('users').doc(user!.uid).collection('myFriends');
+      FirebaseFirestore.instance.collection('users').doc(user.uid).collection('myScores');
+    } on FirebaseAuthException catch (e) {
+      await showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text('Error Occured'),
+          content: Text(e.toString()),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Navigator.of(ctx).pop();
+                },
+                child: Text("OK"))
+          ],
+        ),
+      );
+    }
   }
 
   //  SignOut the current user

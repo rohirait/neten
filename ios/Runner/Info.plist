@@ -65,5 +65,18 @@
       <string>fbapi</string>
       <string>fb-messenger-share-api</string>
     </array>
+    <key>CFBundleURLTypes</key>
+    <array>
+    	<dict>
+    		<key>CFBundleTypeRole</key>
+    		<string>Editor</string>
+    		<key>CFBundleURLSchemes</key>
+    		<array>
+    			<!-- Copied from GoogleService-Info.plist key REVERSED_CLIENT_ID -->
+    			<string>com.googleusercontent.apps.22733820659-gkpoonaq331ts7k90dd6obs0gl9pb12q</string>
+    		</array>
+    	</dict>
+    </array>
+    <!-- End of the Google Sign-in Section -->
 </dict>
 </plist>
