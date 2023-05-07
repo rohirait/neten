@@ -254,7 +254,7 @@ class _AddGameScreenState extends State<AddGameScreen> {
                                               padding: const EdgeInsets.symmetric(horizontal: 4.0),
                                               child: Row(
                                                 children: [
-                                                  Text((yourGames.length - i).toString(),
+                                                  Text(widget.score == null ? (yourGames.length - i).toString() : (i+1).toString(),
                                                       style: Theme.of(context).textTheme.caption),
                                                 ],
                                               ),
@@ -386,9 +386,6 @@ class _AddGameScreenState extends State<AddGameScreen> {
         opponentScore++;
       } else if (opponentGames[i] < yourGames[i]) {
         yourScore++;
-      } else {
-        yourScore++;
-        opponentScore++;
       }
     }
     Score score = Score(

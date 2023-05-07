@@ -23,11 +23,27 @@
           }
         },
         {
+          "client_id": "22733820659-6b3og1aar6ah96oor4ldcj3he7dr1ovb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.monkeyred.netten",
+            "certificate_hash": "67884fb71077c064f4aa2ea0a49e8659254a7960"
+          }
+        },
+        {
           "client_id": "22733820659-c01g329pism0robudru2hle0vca33431.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.monkeyred.netten",
             "certificate_hash": "78c6a5aec1646f8ba53a093cb21909a6b669f52a"
+          }
+        },
+        {
+          "client_id": "22733820659-d1jd6uhsk8hftqms42uite94ke67isf7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.monkeyred.netten",
+            "certificate_hash": "a2da8f710f1e91a78dfcff3862a92429ae496588"
           }
         },
         {
