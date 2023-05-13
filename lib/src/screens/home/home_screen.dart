@@ -71,7 +71,8 @@ class _HomeScreenState extends State<HomeScreen> {
     Map<int, List<Widget>> widgets = {
       0: [
         Consumer(builder: (BuildContext context, WidgetRef ref, Widget? child) {
-          return ref.read(authenticationProvider).getUser()?.photoURL != null
+          return ref.read(authenticationProvider).getUser()?.photoURL != null &&
+                  ref.read(authenticationProvider).getUser()!.photoURL!.isNotEmpty
               ? InkWell(
                   onTap: () {
                     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
@@ -98,7 +99,21 @@ class _HomeScreenState extends State<HomeScreen> {
                       return SettingsScreen(user: ref.read(authenticationProvider).getUser()!);
                     }));
                   },
-                  child: Text('Settings'));
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(15.0),
+                        child: CircleAvatar(
+                          radius: 60,
+                          backgroundColor: Colors.grey,
+                          child: Text(ref.read(authenticationProvider).getUser()!.email!.substring(0,1))
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      Text('Settings')
+                    ],
+                  ),
+                );
         }),
         Consumer(
           builder: (BuildContext context, WidgetRef ref, Widget? child) {
