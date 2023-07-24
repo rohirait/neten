@@ -24,14 +24,13 @@ final myScoresProvider = StreamProvider.autoDispose((ref) {
   });
 });
 
-
-
-Stream<List<Score>> friendScores(Friend friend, User user){
+Stream<List<Score>> friendScores(Friend friend, User user) {
   return FirebaseFirestore.instance
       .collection('users')
       .doc(user.uid)
       .collection('myScores')
       .where('friendId', isEqualTo: friend.id)
+      .orderBy('date', descending: true)
       .snapshots()
       .map((snapshot) {
     return snapshot.docs.map((doc) {
@@ -39,7 +38,6 @@ Stream<List<Score>> friendScores(Friend friend, User user){
       return score;
     }).toList();
   });
-
 }
 
 Future<bool> deleteScore(String userId, String scoreId) async {
@@ -101,7 +99,7 @@ Future<List<String>> createScore({required DateTime date, required Score score, 
       'created': FieldValue.serverTimestamp(),
       'friendId': score.friendId,
       'opponentEmail': score.opponentEmail,
-          'comment': score.comment
+      'comment': score.comment
     });
     //Todo this will change, because we only add a "Score" if both side accept
     // DocumentReference ref1 = await FirebaseFirestore.instance.collection("scores").add({

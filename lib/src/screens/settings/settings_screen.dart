@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:netten/src/screens/settings/avatar_selection.dart';
 import 'package:netten/theme.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../providers/auth_provider.dart';
@@ -31,8 +31,25 @@ class SettingsScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  SizedBox(
+                    width: double.infinity,
+                    child: InkWell(
+                      onTap: () async {
+                        showDialog(
+                          context: context,
+                          builder: (_) => AvatarSelectionDialog(user.uid, user.photoURL),
+                        );
+                      },
+                      child: Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15.0),
+                          ),
+                          child: Padding(padding: const EdgeInsets.all(12.0), child: Center(child: Text('Change avatar')))),
+                    ),
+                  ),
                   Center(child: Text('Your registered email is: \n'+user.email!)),
                   SizedBox(height: 24),
+                  Center(child: Text('Legal', style: Theme.of(context).textTheme.titleLarge,)),
                   SizedBox(
                     width: double.infinity,
                     child: InkWell(

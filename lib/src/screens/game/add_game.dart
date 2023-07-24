@@ -137,6 +137,7 @@ class _AddGameScreenState extends State<AddGameScreen> {
                   TextFormField(
                     enabled: widget.score == null,
                     initialValue: widget.score == null ? '' : widget.score?.comment ?? '',
+                    maxLines: null,
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: Colors.white,
@@ -147,8 +148,9 @@ class _AddGameScreenState extends State<AddGameScreen> {
                       comment = val;
                     },
                   ),
+                  SizedBox(height: 8),
+                  Text('Comments are only visible to you', style: Theme.of(context).textTheme.bodySmall),
                   SizedBox(height: 24),
-
                   Center(child: Text('SETS')),
                   if (widget.score != null) ...[Center(child: Text('Your scores are up and opponent scores are down'))],
                   SizedBox(height: 24),

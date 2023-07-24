@@ -19,24 +19,24 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  firebase_auth: ^4.2.6
-  google_sign_in: ^6.1.0
+  firebase_auth: ^4.6.3
+  google_sign_in: ^6.1.4
   intl: ^0.17.0
-  firebase_messaging: ^14.2.2
-  riverpod: ^2.0.0-dev.5
-  sqflite: ^2.0.0+3
-  path_provider: ^2.0.2
-  cloud_firestore: ^4.3.2
-  shared_preferences: ^2.0.13
-  logger: ^1.1.0
-  flutter_riverpod: ^2.0.0-dev.5
-  firebase_core: ^2.5.0
-  flutter_facebook_auth: ^5.0.8
+  firebase_messaging: ^14.6.4
+  riverpod: ^2.3.6
+  sqflite: ^2.2.4+1
+  path_provider: ^2.0.15
+  cloud_firestore: ^4.8.2
+  shared_preferences: ^2.2.0
+  logger: ^1.4.0
+  flutter_riverpod: ^2.3.6
+  firebase_core: ^2.14.0
+  flutter_facebook_auth: ^6.0.0
   sign_in_with_apple: ^4.3.0
-  crypto: ^3.0.1
-  flutter_slidable: ^2.0.0
-  url_launcher: ^6.1.10
-  flutter_launcher_icons: ^0.12.0
+  crypto: ^3.0.3
+  flutter_slidable: ^3.0.0
+  url_launcher: ^6.1.11
+  flutter_launcher_icons: ^0.13.1
 
 dev_dependencies:
   flutter_test:
@@ -67,6 +67,12 @@ flutter:
   assets:
     - assets/google_logo.png
     - assets/facebook_logo.png
+    - assets/img/avatar1.png
+    - assets/img/avatar2.png
+    - assets/img/avatar3.png
+    - assets/img/avatar4.png
+    - assets/img/avatar5.png
+    - assets/img/avatar6.png
     # An image asset can refer to one or more resolution-specific "variants", see
     # https://flutter.dev/assets-and-images/#resolution-aware.
 

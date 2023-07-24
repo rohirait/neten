@@ -7,22 +7,16 @@ import 'package:netten/src/providers/auth_provider.dart';
 import 'package:netten/src/models/friend.dart';
 import 'package:netten/src/models/friend_request.dart';
 
-final  friendsStreamProvider = StreamProvider.autoDispose((ref) {
+final friendsStreamProvider = StreamProvider.autoDispose((ref) {
   final User? user = ref.read(authenticationProvider).getUser();
-  return FirebaseFirestore.instance
-      .collection('users')
-      .doc(user!.uid)
-      .collection('myFriends')
-      .snapshots()
-      .map((snapshot) {
+  return FirebaseFirestore.instance.collection('users').doc(user!.uid).collection('myFriends').snapshots().map((snapshot) {
     return snapshot.docs.map((doc) {
       return Friend.fromMap(doc.data());
     }).toList();
   });
 });
 
-Future<bool> addFriendFromRequest(
-    {required String id, required String email, required String name, required User? user}) async {
+Future<bool> addFriendFromRequest({required String id, required String email, required String name, required User? user}) async {
   var dbref1 = await FirebaseFirestore.instance
       .collection("users")
       .doc(user?.uid)
@@ -46,8 +40,7 @@ Future<Friend?> findUserFriendByEmail({required String email, required User user
   });
 }
 
-Future<List<String>> addFriend(
-    {required String email, required String name, required User? user, bool createFriendRequest = true}) async {
+Future<List<String>> addFriend({required String email, required String name, required User? user, bool createFriendRequest = true}) async {
   var dbref1 = await FirebaseFirestore.instance
       .collection("users")
       .doc(user?.uid)
@@ -55,17 +48,28 @@ Future<List<String>> addFriend(
       .add({'email': user?.email, 'friend_email': email, 'friend_name': name, 'uid': user?.uid});
   dbref1.update({'id': dbref1.id});
 
-  if (email.isNotEmpty && createFriendRequest)
-    await FirebaseFirestore.instance.collection("friend_request").add({
-      'email': user?.email,
-      'recipient_email': email,
-      'recipient_name': name,
-      'sender_uid': user?.uid,
-      'sender_name': user?.displayName,
-      'created': FieldValue.serverTimestamp(),
-      'status': "PENDING"
-    });
+  if (email.isNotEmpty) {
+    if (createFriendRequest)
+      await FirebaseFirestore.instance.collection("friend_request").add({
+        'email': user?.email,
+        'recipient_email': email,
+        'recipient_name': name,
+        'sender_uid': user?.uid,
+        'sender_name': user?.displayName,
+        'created': FieldValue.serverTimestamp(),
+        'status': "PENDING"
+      });
+    addToAnalytics(email);
+  }
   return [dbref1.id];
+}
+
+Future<void> addToAnalytics(String email) async {
+  bool test = await checkIfUserExists(email);
+  if (test) {
+    return;
+  }
+  await addUserToEmailCollection(email);
 }
 
 Future<bool> denyRequest({required String id}) async {
@@ -75,24 +79,18 @@ Future<bool> denyRequest({required String id}) async {
 }
 
 Future<bool> deleteFriend(User user, String friendId, String email) async {
-
-
-  await FirebaseFirestore.instance
-      .collection('users')
-      .doc(user.uid)
-      .collection('myFriends').doc(friendId).delete();
+  await FirebaseFirestore.instance.collection('users').doc(user.uid).collection('myFriends').doc(friendId).delete();
 
   QuerySnapshot<Map<String, dynamic>> docs = await FirebaseFirestore.instance
       .collection('friend_request')
       .where('recipient_email', isEqualTo: email)
-      .where('email', isEqualTo: user.email).get();
+      .where('email', isEqualTo: user.email)
+      .get();
 
   for (var doc in docs.docs) {
     await doc.reference.delete();
   }
   return true;
-
-
 }
 
 final friendRequestProvider = StreamProvider.autoDispose((ref) {
@@ -114,21 +112,14 @@ final friendRequestProvider = StreamProvider.autoDispose((ref) {
 
 void updateFriend({required String email, required String friendId, required User user}) async {
   //1. Update the email of friend
-  await FirebaseFirestore.instance
-      .collection("users")
-      .doc(user.uid)
-      .collection('myFriends')
-      .doc(friendId)
-      .update({'friend_email': email});
+  await FirebaseFirestore.instance.collection("users").doc(user.uid).collection('myFriends').doc(friendId).update({'friend_email': email});
   //2. Set up the friend request so you can be accepted
-  await FirebaseFirestore.instance.collection("friend_request").add({
-    'email': user.email,
-    'recipient_email': email,
-    'sender_uid': user.uid,
-    'sender_name': user.displayName,
-    'status': "PENDING"
-  });
-  //3-4. Change all scores to also reflect the email. Then create score_requests from all.
+  await FirebaseFirestore.instance
+      .collection("friend_request")
+      .add({'email': user.email, 'recipient_email': email, 'sender_uid': user.uid, 'sender_name': user.displayName, 'status': "PENDING"});
+  //3. Add user email for checking if new user
+  await addToAnalytics(email);
+  //4-5. Change all scores to also reflect the email. Then create score_requests from all.
   WriteBatch myScoresBatch = FirebaseFirestore.instance.batch();
 
   await FirebaseFirestore.instance
@@ -165,4 +156,23 @@ Future<List<Friend?>?> getFriends({required User user}) async {
     print(e);
   }
   return null;
+}
+
+Future<bool> checkIfUserExists(String userEmail) async {
+  try {
+    var snapshot = await FirebaseFirestore.instance.collection('users').where('email', isEqualTo: userEmail).get();
+    return snapshot.docs.isNotEmpty;
+  } catch (e) {
+    print("Error checking user existence: $e");
+    return false;
+  }
+}
+
+Future<void> addUserToEmailCollection(String email) async {
+  try {
+    await FirebaseFirestore.instance.collection('usersToEmail').add({'email': email});
+    print('User with email $email added to usersToEmail collection.');
+  } catch (e) {
+    print("Error adding user to usersToEmail collection: $e");
+  }
 }

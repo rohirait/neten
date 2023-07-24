@@ -7,6 +7,8 @@ import 'package:netten/src/screens/friends/add_friend.dart';
 import 'package:netten/src/screens/game/add_game.dart';
 
 import 'package:netten/theme.dart';
+import '../../providers/client_provider.dart';
+import '../../widgets/avatar_widget.dart';
 import '../../widgets/gradient_text.dart';
 import '../settings/settings_screen.dart';
 import 'friends_list.dart';
@@ -70,50 +72,17 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Widget> getBody(int index) {
     Map<int, List<Widget>> widgets = {
       0: [
-        Consumer(builder: (BuildContext context, WidgetRef ref, Widget? child) {
-          return ref.read(authenticationProvider).getUser()?.photoURL != null &&
-                  ref.read(authenticationProvider).getUser()!.photoURL!.isNotEmpty
-              ? InkWell(
-                  onTap: () {
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-                      return SettingsScreen(user: ref.read(authenticationProvider).getUser()!);
-                    }));
-                  },
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(15.0),
-                        child: CircleAvatar(
-                          radius: 60,
-                          backgroundImage: NetworkImage(ref.read(authenticationProvider).getUser()!.photoURL!),
-                        ),
-                      ),
-                      SizedBox(height: 8),
-                      Text('Settings')
-                    ],
-                  ),
-                )
-              : InkWell(
-                  onTap: () {
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-                      return SettingsScreen(user: ref.read(authenticationProvider).getUser()!);
-                    }));
-                  },
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(15.0),
-                        child: CircleAvatar(
-                          radius: 60,
-                          backgroundColor: Colors.grey,
-                          child: Text(ref.read(authenticationProvider).getUser()!.email!.substring(0,1))
-                        ),
-                      ),
-                      SizedBox(height: 8),
-                      Text('Settings')
-                    ],
-                  ),
-                );
+        Consumer(builder: (context, ref, child) {
+          return InkWell(
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+                return SettingsScreen(user: ref.read(authenticationProvider).getUser()!);
+              }));
+            },
+            child: Column(
+              children: [AvatarWidget(), Text('Settings')],
+            ),
+          );
         }),
         Consumer(
           builder: (BuildContext context, WidgetRef ref, Widget? child) {
