@@ -13,7 +13,7 @@ class AvatarWidget extends ConsumerWidget {
     return CircleAvatar(
       backgroundImage: client.value != null && client.value!.url != null && !acceptedAvatarUrls.contains(client.value!.url)
           ? NetworkImage(client.value!.url!)
-          : AssetImage('assets/img/'+(client.value?.url != null ? client.value!.url! : '')) as ImageProvider<Object>,
+          : AssetImage('assets/img/'+(client.value?.url != null ? client.value!.url! : 'random.png')) as ImageProvider<Object>,
       radius: 50,
     );
   }

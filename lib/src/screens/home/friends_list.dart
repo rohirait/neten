@@ -26,9 +26,7 @@ class FriendsList extends ConsumerWidget {
                 children: [
                   FriendRequestWidget(),
                   for (Friend friend in friends) ...[
-                    FriendCard(
-                        friend: friend,
-                        user: ref.watch(authenticationProvider).getUser()!),
+                    FriendCard(friend: friend, user: ref.watch(authenticationProvider).getUser()!),
                     SizedBox(height: 8)
                   ]
                 ],
@@ -45,8 +43,7 @@ class FriendCard extends StatelessWidget {
   final Friend friend;
   final User user;
 
-  const FriendCard({Key? key, required this.friend, required this.user})
-      : super(key: key);
+  const FriendCard({Key? key, required this.friend, required this.user}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -64,11 +61,7 @@ class FriendCard extends StatelessWidget {
                       title: const Text('Remove friend'),
                       content: SingleChildScrollView(
                         child: ListBody(
-                          children: const <Widget>[
-                            Text(
-                                'Are you sure you want to remove this friend?'),
-                            Text('This action is permanent!')
-                          ],
+                          children: const <Widget>[Text('Are you sure you want to remove this friend?'), Text('This action is permanent!')],
                         ),
                       ),
                       actionsAlignment: MainAxisAlignment.spaceBetween,
@@ -77,11 +70,9 @@ class FriendCard extends StatelessWidget {
                             onPressed: () {
                               Navigator.of(context).pop();
                             },
-                            child: Text('Cancel',
-                                style: TextStyle(color: Colors.black))),
+                            child: Text('Cancel', style: TextStyle(color: Colors.black))),
                         TextButton(
-                          child: Text('Delete friend',
-                              style: TextStyle(color: Colors.black)),
+                          child: Text('Delete friend', style: TextStyle(color: Colors.black)),
                           onPressed: () {
                             deleteFriend(user, friend.id, friend.email);
                             Navigator.of(context).pop();
@@ -112,9 +103,7 @@ class FriendCard extends StatelessWidget {
               ),
               child: Padding(
                 padding: const EdgeInsets.all(24.0),
-                child: Center(
-                    child: Text(friend.name,
-                        style: Theme.of(context).textTheme.bodyText1)),
+                child: Center(child: Text(friend.name, style: Theme.of(context).textTheme.bodyText1)),
               )),
         ),
       ),
@@ -151,48 +140,72 @@ class FriendRequestCard extends ConsumerWidget {
             ),
             child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                request.senderName.isNotEmpty
-                                    ? request.senderName
-                                    : request.email,
-                                style: Theme.of(context).textTheme.bodyText1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              if (request.senderName.isNotEmpty)
-                                Text(request.email,
-                                    style:
-                                        Theme.of(context).textTheme.bodyText2)
-                            ]),
+                child: Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Expanded(
+                    child: Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      Text(
+                        request.senderName.isNotEmpty ? request.senderName : request.email,
+                        style: Theme.of(context).textTheme.bodyText1,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      ElevatedButton(
-                          child: Icon(Icons.add),
-                          onPressed: () {
-                            addFriendFromRequest(
-                              id: request.id,
-                              email: request.email,
-                              name: request.senderName,
-                              user: ref.read(authenticationProvider).getUser(),
-                            );
-                          },
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: NetenColor.primaryColor)),
-                      SizedBox(width: 24),
-                      ElevatedButton(
-                          child: Icon(Icons.clear),
-                          onPressed: () {
-                            denyRequest(id: request.id);
-                          },
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.redAccent)),
-                    ]))));
+                      if (request.senderName.isNotEmpty) Text(request.email, style: Theme.of(context).textTheme.bodyText2)
+                    ]),
+                  ),
+                  ElevatedButton(
+                      child: Icon(Icons.add),
+                      onPressed: () {
+                        if (request.senderName.isNotEmpty) {
+                          addFriendFromRequest(
+                            id: request.id,
+                            email: request.email,
+                            name: request.senderName,
+                            user: ref.read(authenticationProvider).getUser(),
+                          );
+                        } else {
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                String name = '';
+                                return AlertDialog(
+                                  title: Text('Could you please add the name of the friend'),
+                                  content: TextField(
+                                    decoration: const InputDecoration(
+                                      border: InputBorder.none,
+                                      fillColor: NetenColor.primaryColor,
+                                      icon: Icon(Icons.email, color: NetenColor.primaryColor),
+                                      hintText: "Friend's name",
+                                      labelText: 'Name',
+                                    ),
+                                    onChanged: (value) {
+                                      name = value;
+                                    },
+                                  ),
+                                  actions: [
+                                    ElevatedButton(
+                                        onPressed: name.isNotEmpty
+                                            ? () {
+                                                addFriendFromRequest(
+                                                  id: request.id,
+                                                  email: request.email,
+                                                  name: name,
+                                                  user: ref.read(authenticationProvider).getUser(),
+                                                );
+                                              }
+                                            : null,
+                                        child: Text('Save'))
+                                  ],
+                                );
+                              });
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(backgroundColor: NetenColor.primaryColor)),
+                  SizedBox(width: 24),
+                  ElevatedButton(
+                      child: Icon(Icons.clear),
+                      onPressed: () {
+                        denyRequest(id: request.id);
+                      },
+                      style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent)),
+                ]))));
   }
 }
