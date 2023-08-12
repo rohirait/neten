@@ -166,34 +166,51 @@ class FriendRequestCard extends ConsumerWidget {
                               context: context,
                               builder: (context) {
                                 String name = '';
-                                return AlertDialog(
-                                  title: Text('Could you please add the name of the friend'),
-                                  content: TextField(
-                                    decoration: const InputDecoration(
-                                      border: InputBorder.none,
-                                      fillColor: NetenColor.primaryColor,
-                                      icon: Icon(Icons.email, color: NetenColor.primaryColor),
-                                      hintText: "Friend's name",
-                                      labelText: 'Name',
-                                    ),
-                                    onChanged: (value) {
-                                      name = value;
-                                    },
-                                  ),
-                                  actions: [
-                                    ElevatedButton(
-                                        onPressed: name.isNotEmpty
-                                            ? () {
-                                                addFriendFromRequest(
-                                                  id: request.id,
-                                                  email: request.email,
-                                                  name: name,
-                                                  user: ref.read(authenticationProvider).getUser(),
-                                                );
-                                              }
-                                            : null,
-                                        child: Text('Save'))
-                                  ],
+                                return StatefulBuilder(
+                                  builder: (context, setState) {
+                                    return AlertDialog(
+                                      title: Text('Please add the name of the friend'),
+                                      content: TextFormField(
+                                        decoration: const InputDecoration(
+                                          border: InputBorder.none,
+                                          fillColor: NetenColor.primaryColor,
+                                          icon: Icon(Icons.email, color: NetenColor.primaryColor),
+                                          hintText: "Friend's name",
+                                          labelText: 'Name',
+                                        ),
+                                        onChanged: (value) {
+                                          name = value;
+                                          setState((){});
+                                        },
+                                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                                        validator: (val){
+                                          if(name.isEmpty){
+                                            return 'Name cannot be empty';
+                                          }
+                                        },
+
+                                      ),
+                                        actionsAlignment: MainAxisAlignment.center,
+                                      actions: [
+                                        ElevatedButton(
+                                    style: ElevatedButton.styleFrom(backgroundColor: NetenColor.primaryColor, disabledBackgroundColor: Colors.grey),
+                                            onPressed: name.isNotEmpty
+                                                ? () {
+                                                    addFriendFromRequest(
+                                                      id: request.id,
+                                                      email: request.email,
+                                                      name: name,
+                                                      user: ref.read(authenticationProvider).getUser(),
+                                                    ).then((value) => Navigator.of(context).pop());
+                                                  }
+                                                : null,
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(12.0),
+                                              child: Text('Save', style: TextStyle(color: Colors.white),),
+                                            ))
+                                      ],
+                                    );
+                                  }
                                 );
                               });
                         }
