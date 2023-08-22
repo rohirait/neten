@@ -11,7 +11,7 @@ description: A new Flutter application.
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 7.0.0+7
+version: 8.0.0+8
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
@@ -37,6 +37,7 @@ dependencies:
   flutter_slidable: ^3.0.0
   url_launcher: ^6.1.11
   flutter_launcher_icons: ^0.13.1
+  firebase_analytics: ^10.4.5
 
 dev_dependencies:
   flutter_test:
@@ -67,12 +68,16 @@ flutter:
   assets:
     - assets/google_logo.png
     - assets/facebook_logo.png
-    - assets/img/avatar1.png
-    - assets/img/avatar2.png
-    - assets/img/avatar3.png
-    - assets/img/avatar4.png
-    - assets/img/avatar5.png
-    - assets/img/avatar6.png
+    - assets/img/avatar1.jpg
+    - assets/img/avatar2.jpg
+    - assets/img/avatar3.jpg
+    - assets/img/avatar4.jpg
+    - assets/img/avatar5.jpg
+    - assets/img/avatar6.jpg
+    - assets/img/avatar7.jpg
+    - assets/img/avatar8.jpg
+    - assets/img/avatar9.jpg
+    - assets/img/avatar10.jpg
     - assets/img/random.png
     # An image asset can refer to one or more resolution-specific "variants", see
     # https://flutter.dev/assets-and-images/#resolution-aware.
