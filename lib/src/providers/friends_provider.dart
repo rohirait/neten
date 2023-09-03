@@ -60,7 +60,7 @@ Future<List<String>> addFriend({required String email, required String name, req
         'status': "PENDING"
       });
     addToAnalytics(email);
-  }
+  };
   return [dbref1.id];
 }
 

@@ -2,15 +2,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:netten/src/providers/auth_provider.dart';
-import 'package:netten/src/providers/score_provider.dart';
 import 'package:netten/src/screens/friends/add_friend.dart';
 import 'package:netten/src/screens/game/add_game.dart';
 
 import 'package:netten/theme.dart';
-import '../../providers/client_provider.dart';
-import '../../widgets/avatar_widget.dart';
-import '../../widgets/gradient_text.dart';
-import '../settings/settings_screen.dart';
+import 'package:netten/src/widgets/avatar_widget.dart';
+import 'package:netten/src/widgets/gradient_text.dart';
+import 'package:netten/src/screens/settings/settings_screen.dart';
 import 'friends_list.dart';
 import 'games_list.dart';
 

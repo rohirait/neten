@@ -28,7 +28,12 @@ class GamesList extends ConsumerWidget {
             child: Column(children: [
               ScoreRequestWidget(),
               Divider(),
-              for (Score score in scores) ...[ScoreView(score: score, user: ref.watch(authenticationProvider).getUser()!,)]
+              for (Score score in scores) ...[
+                ScoreView(
+                  score: score,
+                  user: ref.watch(authenticationProvider).getUser()!,
+                )
+              ]
             ]),
           ),
         ),
@@ -40,6 +45,7 @@ class GamesList extends ConsumerWidget {
 class ScoreView extends StatelessWidget {
   final Score score;
   final User user;
+
   const ScoreView({Key? key, required this.score, required this.user}) : super(key: key);
 
   @override
@@ -48,43 +54,48 @@ class ScoreView extends StatelessWidget {
     return InkWell(
       onTap: () {
         Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-          return AddGameScreen(score: score,);
+          return AddGameScreen(
+            score: score,
+          );
         }));
       },
       child: Slidable(
-        endActionPane:  ActionPane(
+        endActionPane: ActionPane(
           motion: ScrollMotion(),
           children: [
             SlidableAction(
-        borderRadius: BorderRadius.circular(15.0),
-              onPressed: (context){
-                showDialog(context: context, builder: (context){
-                  return AlertDialog(
-                    title: const Text('Remove score'),
-                    content: SingleChildScrollView(
-                      child: ListBody(
-                        children: const <Widget>[
-                          Text('Are you sure you want to remove this score?'),
-                          Text('This action is permanent!')
+              borderRadius: BorderRadius.circular(15.0),
+              onPressed: (context) {
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text('Remove score'),
+                        content: SingleChildScrollView(
+                          child: ListBody(
+                            children: const <Widget>[
+                              Text('Are you sure you want to remove this score?'),
+                              Text('This action is permanent!')
+                            ],
+                          ),
+                        ),
+                        actionsAlignment: MainAxisAlignment.spaceBetween,
+                        actions: <Widget>[
+                          ElevatedButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Text('Cancel', style: TextStyle(color: Colors.black))),
+                          TextButton(
+                            child: Text('Delete score', style: TextStyle(color: Colors.black)),
+                            onPressed: () {
+                              deleteScore(user.uid, score.id!);
+                              Navigator.of(context).pop();
+                            },
+                          ),
                         ],
-                      ),
-                    ),
-                    actionsAlignment: MainAxisAlignment.spaceBetween,
-                    actions: <Widget>[
-                      ElevatedButton(onPressed: (){
-                        Navigator.of(context).pop();
-                      }, child: Text('Cancel', style: TextStyle(color: Colors.black))),
-                      TextButton(
-                        child:  Text('Delete score',style: TextStyle(color: Colors.black)),
-                        onPressed: () {
-                          deleteScore(user.uid, score.id!);
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ],
-                  );
-                });
-
+                      );
+                    });
               },
               backgroundColor: Colors.red,
               foregroundColor: Colors.white,
@@ -106,12 +117,12 @@ class ScoreView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                        Text(score.opponent, style: Theme.of(context).textTheme.bodyText1,
-                          overflow: TextOverflow.ellipsis,),
+                      child: Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
+                        Text(
+                          score.opponent,
+                          style: Theme.of(context).textTheme.bodyText1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                         Text(score.date, style: Theme.of(context).textTheme.bodyText2)
                       ]),
                     ),
@@ -126,23 +137,22 @@ class ScoreView extends StatelessWidget {
   }
 }
 
-class ScoreRequestWidget extends ConsumerWidget{
-  
+class ScoreRequestWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // We can also use "ref" to listen to a provider inside the build method
     final scoreRequests = ref.watch(scoreRequestProvider);
     return scoreRequests.when(
-      loading: () => SizedBox.shrink(),
-      error: (error, stack) => SizedBox.shrink(),
-      data: (List<ScoreRequest> data) =>
-         Column(
-          children: [
-            for(ScoreRequest d in data) ...[ScoreRequestView(score: d, user: ref.watch(authenticationProvider).getUser()!,)]
-          ]
-        )
-
-    );
+        loading: () => SizedBox.shrink(),
+        error: (error, stack) => SizedBox.shrink(),
+        data: (List<ScoreRequest> data) => Column(children: [
+              for (ScoreRequest d in data) ...[
+                ScoreRequestView(
+                  score: d,
+                  user: ref.watch(authenticationProvider).getUser()!,
+                )
+              ]
+            ]));
   }
 }
 
@@ -150,7 +160,7 @@ class ScoreRequestView extends ConsumerWidget {
   final ScoreRequest score;
   final User user;
 
-  const ScoreRequestView({Key? key, required this.score, required this.user }) : super(key: key);
+  const ScoreRequestView({Key? key, required this.score, required this.user}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -167,14 +177,14 @@ class ScoreRequestView extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(score.opponentName ?? score.opponentEmail, style: Theme.of(context).textTheme.bodyText1,
-                          overflow: TextOverflow.ellipsis,),
-                        Text(score.date, style: Theme.of(context).textTheme.bodyText2)
-                      ]),
+                  child: Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Text(
+                      score.opponentName ?? score.opponentEmail,
+                      style: Theme.of(context).textTheme.bodyText1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Text(score.date, style: Theme.of(context).textTheme.bodyText2)
+                  ]),
                 ),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -185,22 +195,19 @@ class ScoreRequestView extends ConsumerWidget {
                     Row(
                       children: [
                         ElevatedButton(
-                          child: Icon(Icons.add),
-                          onPressed: (){
-                            score.opponentName = getOpponentName(score.opponentEmail, score.opponentName, ref);
-                            createScoreFromRequest(score, user);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: NetenColor.primaryColor
-                          )
-                        ),
+                            child: Icon(Icons.add),
+                            onPressed: () {
+                              score.opponentName = getOpponentName(score.opponentEmail, score.opponentName, ref);
+                              createScoreFromRequest(score, user);
+                            },
+                            style: ElevatedButton.styleFrom(backgroundColor: NetenColor.primaryColor)),
                         SizedBox(width: 24),
-                        ElevatedButton(child: Icon(Icons.clear), onPressed: () {
-                          denyScoreRequest(score);
-                        },
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.redAccent
-                            )),
+                        ElevatedButton(
+                            child: Icon(Icons.clear),
+                            onPressed: () {
+                              denyScoreRequest(score);
+                            },
+                            style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent)),
                       ],
                     ),
                   ],
@@ -212,14 +219,13 @@ class ScoreRequestView extends ConsumerWidget {
   }
 
   String getOpponentName(String opponentEmail, String? opponentName, WidgetRef ref) {
-    if(opponentName != null)
-      return opponentName;
+    if (opponentName != null) return opponentName;
 
     List<Friend?>? friends = ref.watch(friendsProvider).value;
 
-    if(friends != null){
-      for(Friend? f in friends){
-        if(f != null && f.email == opponentEmail){
+    if (friends != null) {
+      for (Friend? f in friends) {
+        if (f != null && f.email == opponentEmail) {
           return f.name;
         }
       }

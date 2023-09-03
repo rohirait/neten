@@ -21,7 +21,7 @@ class AvatarWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final client = ref.watch(clientProvider);
 
-    return CircleAvatar(
+    return client.isLoading ? SizedBox.shrink() : CircleAvatar(
       backgroundImage: client.value != null && client.value!.url != null && !acceptedAvatarUrls.contains(client.value!.url)
           ? NetworkImage(client.value!.url!)
           : AssetImage('assets/img/' + (client.value?.url != null ? client.value!.url! : 'random.jpg')) as ImageProvider<Object>,

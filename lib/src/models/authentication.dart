@@ -77,11 +77,9 @@ class Authentication {
 
     try {
       User? user = (await _auth.signInWithCredential(credential)).user;
-      if (user != null)
-        FirebaseFirestore.instance.collection('users').doc(user.uid).update(
-            {'name': user.displayName, 'email': user.email, 'uid': user.uid});
-      FirebaseFirestore.instance.collection('users').doc(user!.uid).collection('myFriends');
-      FirebaseFirestore.instance.collection('users').doc(user.uid).collection('myScores');
+      if (user != null) {
+        updateOrSetUser(user);
+      }
     } on FirebaseAuthException catch (e) {
       await showDialog(
         context: context,
@@ -110,11 +108,9 @@ class Authentication {
     // Once signed in, return the UserCredential
     try {
       User? user = (await _auth.signInWithCredential(credential)).user;
-      if (user != null)
-        FirebaseFirestore.instance.collection('users').doc(user.uid).set(
-            {'name': user.displayName, 'email': user.email, 'uid': user.uid, 'url': user.photoURL});
-      FirebaseFirestore.instance.collection('users').doc(user!.uid).collection('myFriends');
-      FirebaseFirestore.instance.collection('users').doc(user.uid).collection('myScores');
+      if (user != null) {
+        updateOrSetUser(user);
+      }
     } on FirebaseAuthException catch (e) {
       await showDialog(
         context: context,
@@ -131,6 +127,37 @@ class Authentication {
         ),
       );
     }
+  }
+
+  void updateOrSetUser(User user) {
+    FirebaseFirestore.instance.collection('users').doc(user.uid).get().then((DocumentSnapshot documentSnapshot) {
+      if (documentSnapshot.exists) {
+        FirebaseFirestore.instance.collection('users').doc(user.uid).update(
+          {'lastLogin': DateTime.now(),
+          },
+        );
+        FirebaseFirestore.instance.collection('users').doc(user.uid).collection('myFriends');
+        FirebaseFirestore.instance.collection('users').doc(user.uid).collection('myScores');
+      } else {
+        // The document doesn't exist, create it
+        FirebaseFirestore.instance.collection('users').doc(user.uid).set(
+          {
+            'name': user.displayName,
+            'email': user.email,
+            'uid': user.uid,
+            'created': DateTime.now(),
+          },
+        ).then((_) {
+
+        }).catchError((error) {
+          // Handle errors, e.g., if there's a problem with Firestore
+          print('Error: $error');
+        });
+      }
+    }).catchError((error) {
+      // Handle errors when fetching the document
+      print('Error: $error');
+    });
   }
 
   /// Generates a cryptographically secure random nonce, to be included in a
@@ -175,11 +202,7 @@ class Authentication {
     // not match the nonce in `appleCredential.identityToken`, sign in will fail.
     try {
       User? user = (await _auth.signInWithCredential(oauthCredential)).user;
-      if (user != null)
-        FirebaseFirestore.instance.collection('users').doc(user.uid).set(
-            {'name': user.displayName, 'email': user.email, 'uid': user.uid, 'url': user.photoURL});
-      FirebaseFirestore.instance.collection('users').doc(user!.uid).collection('myFriends');
-      FirebaseFirestore.instance.collection('users').doc(user.uid).collection('myScores');
+      if (user != null) updateOrSetUser(user);
     } on FirebaseAuthException catch (e) {
       await showDialog(
         context: context,
@@ -200,11 +223,11 @@ class Authentication {
 
   //  SignOut the current user
   Future<void> signOut() async {
-    try{
+    try {
       await GoogleSignIn().isSignedIn().then((value) async {
-       if(value) await GoogleSignIn().disconnect();
+        if (value) await GoogleSignIn().disconnect();
       });
-    } catch (error){
+    } catch (error) {
       print(error);
     }
     await _auth.signOut();
