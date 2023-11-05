@@ -83,7 +83,7 @@ class _AvatarSelectionDialogState extends State<AvatarSelectionDialog> {
       ),
     );
   }
-
+  //TODO Rait: Why not in a provider
   Future<void> _updateAvatar(BuildContext context, String avatarName) async {
     final userDoc = FirebaseFirestore.instance.collection('users').doc(widget.userId);
 

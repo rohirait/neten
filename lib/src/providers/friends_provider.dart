@@ -7,6 +7,8 @@ import 'package:netten/src/providers/auth_provider.dart';
 import 'package:netten/src/models/friend.dart';
 import 'package:netten/src/models/friend_request.dart';
 
+import '../models/client.dart';
+
 final friendsStreamProvider = StreamProvider.autoDispose((ref) {
   final User? user = ref.read(authenticationProvider).getUser();
   return FirebaseFirestore.instance.collection('users').doc(user!.uid).collection('myFriends').snapshots().map((snapshot) {
@@ -16,7 +18,7 @@ final friendsStreamProvider = StreamProvider.autoDispose((ref) {
   });
 });
 
-Future<bool> addFriendFromRequest({required String id, required String email, required String name, required User? user}) async {
+Future<bool> addFriendFromRequest({required String id, required String email, required String name, required Client? user}) async {
   var dbref1 = await FirebaseFirestore.instance
       .collection("users")
       .doc(user?.uid)
@@ -40,12 +42,12 @@ Future<Friend?> findUserFriendByEmail({required String email, required User user
   });
 }
 
-Future<List<String>> addFriend({required String email, required String name, required User? user, bool createFriendRequest = true}) async {
+Future<List<String>> addFriend({required String email, required String name, required Client? user, bool createFriendRequest = true}) async {
   var dbref1 = await FirebaseFirestore.instance
       .collection("users")
       .doc(user?.uid)
       .collection('myFriends')
-      .add({'email': user?.email, 'friend_email': email, 'friend_name': name, 'uid': user?.uid});
+      .add({'email': user?.email, 'friend_email': email, 'friend_name': name, 'uid': user?.uid, 'added': DateTime.now()});
   dbref1.update({'id': dbref1.id});
 
   if (email.isNotEmpty) {
@@ -110,7 +112,7 @@ final friendRequestProvider = StreamProvider.autoDispose((ref) {
   });
 });
 
-void updateFriend({required String email, required String friendId, required User user}) async {
+void updateFriend({required String email, required String friendId, required Client user}) async {
   //1. Update the email of friend
   await FirebaseFirestore.instance.collection("users").doc(user.uid).collection('myFriends').doc(friendId).update({'friend_email': email});
   //2. Set up the friend request so you can be accepted

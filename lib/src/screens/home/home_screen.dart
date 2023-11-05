@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:netten/src/providers/auth_provider.dart';
 import 'package:netten/src/screens/friends/add_friend.dart';
+import 'package:netten/src/screens/friends/search_friend_screen.dart';
 import 'package:netten/src/screens/game/add_game.dart';
-
 import 'package:netten/theme.dart';
 import 'package:netten/src/widgets/avatar_widget.dart';
 import 'package:netten/src/widgets/gradient_text.dart';
@@ -171,6 +171,10 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void getButtonRoute(int index) {
+    if(index == 2) {
+       _showAddFriendDialog();
+       return;
+    }
     Map<int, Widget> routes = {
       0: Text("Test"),
       1: AddGameScreen(),
@@ -183,4 +187,72 @@ class _HomeScreenState extends State<HomeScreen> {
       return routes[0]!;
     }));
   }
+
+  Future<void> _showAddFriendDialog( ) async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.transparent, // Set background color to transparent
+
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: Text('Add manually',
+                        style: Theme.of(context).textTheme.bodyText1?.copyWith(color: Colors.white),
+                      ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      primary: NetenColor.buttonColor,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(50)),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+                        return SearchFriendScreen();
+                      }));
+
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: Text('Search for friend',
+                        style: Theme.of(context).textTheme.bodyText1?.copyWith(color: Colors.white),
+                      ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      primary: NetenColor.buttonColor,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(50)),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 }
+

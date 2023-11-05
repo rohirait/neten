@@ -18,6 +18,9 @@ final clientProvider = StreamProvider.autoDispose<Client?>((ref) {
           name: data?['name'],
           uid: data?['uid'],
           url: data?['url'],
+          firstName: data?['firstName'],
+          lastName: data?['lastName'],
+          displayName: data?['displayName']
         );
       } else {
         return null;

@@ -2,11 +2,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:netten/src/models/score.dart';
+import 'package:netten/src/providers/client_provider.dart';
 import 'package:netten/src/providers/friends_provider.dart';
 import 'package:netten/src/providers/score_provider.dart';
 import 'package:netten/src/screens/home/games_list.dart';
 
 import '../../../theme.dart';
+import '../../models/client.dart';
 import '../../models/friend.dart';
 import '../../providers/auth_provider.dart';
 import '../../widgets/gradient_text.dart';
@@ -38,7 +40,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
         bottomNavigationBar: (widget.friend == null || widget.friend!.email.isEmpty)
             ? Consumer(
                 builder: (BuildContext context, WidgetRef ref, Widget? child) {
-                  final User? user = ref.read(authenticationProvider).getUser();
+                  final Client? user = ref.read(clientProvider).value;
                   return Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: ElevatedButton(
@@ -155,7 +157,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
         ))));
   }
 
-  void validateFormAndAddFriend(User s) {
+  void validateFormAndAddFriend(Client s) {
     if (_formKey.currentState?.validate() == true) {
       _formKey.currentState?.save();
       if (email != null && name != null) {
@@ -165,7 +167,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
     }
   }
 
-  void validateFormAndUpdateFriend(Friend friend, User user) {
+  void validateFormAndUpdateFriend(Friend friend, Client user) {
     if (_formKey.currentState?.validate() == true) {
       _formKey.currentState?.save();
       if (email != null) {

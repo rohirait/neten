@@ -6,6 +6,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:netten/src/models/friend.dart';
 import 'package:netten/src/models/friend_request.dart';
 import 'package:netten/src/providers/auth_provider.dart';
+import 'package:netten/src/providers/client_provider.dart';
 import 'package:netten/src/providers/friends_provider.dart';
 import 'package:netten/src/screens/friends/add_friend.dart';
 import 'package:netten/theme.dart';
@@ -159,59 +160,60 @@ class FriendRequestCard extends ConsumerWidget {
                             id: request.id,
                             email: request.email,
                             name: request.senderName,
-                            user: ref.read(authenticationProvider).getUser(),
+                            user: ref.read(clientProvider).value,
                           );
                         } else {
                           showDialog(
                               context: context,
                               builder: (context) {
                                 String name = '';
-                                return StatefulBuilder(
-                                  builder: (context, setState) {
-                                    return AlertDialog(
-                                      title: Text('Please add the name of the friend'),
-                                      content: TextFormField(
-                                        decoration: const InputDecoration(
-                                          border: InputBorder.none,
-                                          fillColor: NetenColor.primaryColor,
-                                          icon: Icon(Icons.email, color: NetenColor.primaryColor),
-                                          hintText: "Friend's name",
-                                          labelText: 'Name',
-                                        ),
-                                        onChanged: (value) {
-                                          name = value;
-                                          setState((){});
-                                        },
-                                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                                        validator: (val){
-                                          if(name.isEmpty){
-                                            return 'Name cannot be empty';
-                                          }
-                                        },
-
+                                return StatefulBuilder(builder: (context, setState) {
+                                  return AlertDialog(
+                                    title: Text('Please add the name of the friend'),
+                                    content: TextFormField(
+                                      decoration: const InputDecoration(
+                                        border: InputBorder.none,
+                                        fillColor: NetenColor.primaryColor,
+                                        icon: Icon(Icons.email, color: NetenColor.primaryColor),
+                                        hintText: "Friend's name",
+                                        labelText: 'Name',
                                       ),
-                                        actionsAlignment: MainAxisAlignment.center,
-                                      actions: [
-                                        ElevatedButton(
-                                    style: ElevatedButton.styleFrom(backgroundColor: NetenColor.primaryColor, disabledBackgroundColor: Colors.grey),
-                                            onPressed: name.isNotEmpty
-                                                ? () {
-                                                    addFriendFromRequest(
-                                                      id: request.id,
-                                                      email: request.email,
-                                                      name: name,
-                                                      user: ref.read(authenticationProvider).getUser(),
-                                                    ).then((value) => Navigator.of(context).pop());
-                                                  }
-                                                : null,
-                                            child: Padding(
-                                              padding: const EdgeInsets.all(12.0),
-                                              child: Text('Save', style: TextStyle(color: Colors.white),),
-                                            ))
-                                      ],
-                                    );
-                                  }
-                                );
+                                      onChanged: (value) {
+                                        name = value;
+                                        setState(() {});
+                                      },
+                                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                                      validator: (val) {
+                                        if (name.isEmpty) {
+                                          return 'Name cannot be empty';
+                                        }
+                                      },
+                                    ),
+                                    actionsAlignment: MainAxisAlignment.center,
+                                    actions: [
+                                      ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                              backgroundColor: NetenColor.primaryColor, disabledBackgroundColor: Colors.grey),
+                                          onPressed: name.isNotEmpty
+                                              ? () {
+                                                  addFriendFromRequest(
+                                                    id: request.id,
+                                                    email: request.email,
+                                                    name: name,
+                                                    user: ref.read(clientProvider).value,
+                                                  ).then((value) => Navigator.of(context).pop());
+                                                }
+                                              : null,
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(12.0),
+                                            child: Text(
+                                              'Save',
+                                              style: TextStyle(color: Colors.white),
+                                            ),
+                                          ))
+                                    ],
+                                  );
+                                });
                               });
                         }
                       },

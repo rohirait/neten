@@ -236,4 +236,5 @@ class Authentication {
   User? getUser() {
     return _auth.currentUser;
   }
+
 }
