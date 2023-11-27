@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 // String readTimestamp(int timestamp) {
@@ -26,6 +27,31 @@ import 'package:intl/intl.dart';
 //
 //   return time;
 // }
+
+void showLoading(BuildContext context){
+  showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (_) {
+        return const Dialog(
+          // The background color
+          backgroundColor: Colors.white,
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                // The loading indicator
+                CircularProgressIndicator(),
+                SizedBox(
+                  height: 15,
+                ),
+              ],
+            ),
+          ),
+        );
+      });
+}
 
 String readTimestamp(DateTime timestamp) {
   return DateFormat('dd.MM.yyyy').format(timestamp);

@@ -8,6 +8,7 @@ import 'package:netten/theme.dart';
 import 'package:netten/util.dart';
 
 import '../../models/client.dart';
+import '../../models/friend.dart';
 
 class SearchFriendScreen extends StatefulWidget {
   const SearchFriendScreen({Key? key}) : super(key: key);
@@ -101,18 +102,31 @@ class _SearchFriendScreenState extends State<SearchFriendScreen> {
                             var user = _searchResults.elementAt(index).data() as Map<String, dynamic>;
                             return InkWell(
                               onTap: (){
-                                addFriend(email: user['email']!, name: user['fullName'].toString().capitalizeFirstLetterOfWords(), user: client);
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(user['fullName'].toString().capitalizeFirstLetterOfWords()+' added as a friend!'),
-                                    duration: Duration(seconds: 2), // You can customize the duration as needed
-                                  ),
-                                );
-                                List<DocumentSnapshot> resultList = _searchResults.toList();
-                                resultList.removeAt(index);
-                                setState(() {
-                                  _searchResults = resultList.toSet();
-                                });
+                                showLoading(context);
+                                List<Friend>? friends = ref.watch(friendsStreamProvider).value;
+                                bool? add = friends?.any((friend) => friend.email == user['email']);
+                                Navigator.of(context).pop();
+                                if(add == true){
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(user['fullName'].toString().capitalizeFirstLetterOfWords()+' is already your friend!'),
+                                      duration: Duration(seconds: 2), // You can customize the duration as needed
+                                    ),
+                                  );
+                                } else if (add == false){
+                                  addFriend(email: user['email']!, name: user['fullName'].toString().capitalizeFirstLetterOfWords(), user: client);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(user['fullName'].toString().capitalizeFirstLetterOfWords()+' added as a friend!'),
+                                      duration: Duration(seconds: 2), // You can customize the duration as needed
+                                    ),
+                                  );
+                                  List<DocumentSnapshot> resultList = _searchResults.toList();
+                                  resultList.removeAt(index);
+                                  setState(() {
+                                    _searchResults = resultList.toSet();
+                                  });
+                                }
                               },
                               child: SizedBox(
                                 width: double.infinity,

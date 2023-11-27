@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:netten/src/providers/auth_provider.dart';
+import 'package:netten/src/providers/client_provider.dart';
 import 'package:netten/src/screens/friends/add_friend.dart';
 import 'package:netten/src/screens/friends/search_friend_screen.dart';
 import 'package:netten/src/screens/game/add_game.dart';
@@ -9,6 +10,8 @@ import 'package:netten/theme.dart';
 import 'package:netten/src/widgets/avatar_widget.dart';
 import 'package:netten/src/widgets/gradient_text.dart';
 import 'package:netten/src/screens/settings/settings_screen.dart';
+import 'package:netten/util.dart';
+import '../../models/client.dart';
 import 'friends_list.dart';
 import 'games_list.dart';
 
@@ -84,6 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
         }),
         Consumer(
           builder: (BuildContext context, WidgetRef ref, Widget? child) {
+             Client? client = ref.read(clientProvider).value;
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 15.0),
               child: Row(
@@ -91,7 +95,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   LimitedBox(
                     maxWidth: 250,
-                    child: Text("Welcome " + (ref.read(authenticationProvider).getUser()?.displayName ?? ''),
+                    child: Text("Welcome " + (client?.fullName?.capitalizeFirstLetterOfWords() ?? ref.read(authenticationProvider).getUser()?.displayName ?? ''),
                         style: Theme.of(context).textTheme.bodyText1),
                   ),
                   Align(
@@ -204,7 +208,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
-
+                      Navigator.of(context).pop();
+                      Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+                        return AddFriendScreen();
+                      }));
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(15.0),
