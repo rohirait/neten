@@ -129,7 +129,7 @@ class Authentication {
     }
   }
 
-  void updateOrSetUser(User user) {
+  void updateOrSetUser(User user, {String? firstName, String? lastName}) {
     FirebaseFirestore.instance.collection('users').doc(user.uid).get().then((DocumentSnapshot documentSnapshot) {
       if (documentSnapshot.exists) {
         FirebaseFirestore.instance.collection('users').doc(user.uid).update(
@@ -146,6 +146,9 @@ class Authentication {
             'email': user.email,
             'uid': user.uid,
             'created': DateTime.now(),
+            if(firstName != null) 'firstName': firstName,
+            if(lastName != null) 'lastName': lastName
+
           },
         ).then((_) {
 
@@ -198,11 +201,13 @@ class Authentication {
       rawNonce: rawNonce,
     );
 
+    String? firstName = appleCredential.givenName;
+    String? lastName = appleCredential.familyName;
     // Sign in the user with Firebase. If the nonce we generated earlier does
     // not match the nonce in `appleCredential.identityToken`, sign in will fail.
     try {
       User? user = (await _auth.signInWithCredential(oauthCredential)).user;
-      if (user != null) updateOrSetUser(user);
+      if (user != null) updateOrSetUser(user, firstName: firstName, lastName: lastName);
     } on FirebaseAuthException catch (e) {
       await showDialog(
         context: context,
