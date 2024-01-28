@@ -59,47 +59,6 @@ class SignIn extends ConsumerWidget {
                     )),
               ),
               const SizedBox(height: 18),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 46.0),
-                child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        shadowColor: Colors.black,
-                        primary: NetenColor.facebookColor,
-                        elevation: 4,
-                        textStyle: Theme.of(context).textTheme.bodyText2?.copyWith(color: Colors.black)),
-                    onPressed: () async {
-                      ref
-                          .watch(authenticationProvider)
-                          .signInWithFacebook(context)
-                          .onError((error, stackTrace) => throw Exception(error.toString()));
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          const Image(
-                            image: AssetImage('assets/facebook_logo.png'),
-                            height: 18.0,
-                          ),
-                          const SizedBox(width: 15),
-                          Expanded(
-                            child: Text('Facebook',
-                                style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.white,
-                                    letterSpacing: 0.25,
-                                    height: 1.2,
-                                    fontFamily: 'Roboto',
-                                    fontWeight: FontWeight.w500)),
-                          )
-                        ],
-                      ),
-                    )),
-              ),
               SizedBox(height: 18),
               if(Platform.isIOS)
                 Padding(
