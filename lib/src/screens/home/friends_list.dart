@@ -102,9 +102,13 @@ class FriendCard extends StatelessWidget {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15.0),
               ),
-              child: Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Center(child: Text(friend.name, style: Theme.of(context).textTheme.bodyText1)),
+              child: Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(24.0),
+                    child: Center(child: Text(friend.name, style: Theme.of(context).textTheme.bodyText1)),
+                  ),
+                ],
               )),
         ),
       ),

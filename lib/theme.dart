@@ -4,9 +4,7 @@ final ThemeData NetenTheme = ThemeData(
     textTheme: _mainTextTheme,
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        onPrimary: Colors.white,
-        onSurface: Colors.white,
-        primary: Colors.white,
+        foregroundColor: Colors.white, backgroundColor: Colors.white, disabledForegroundColor: Colors.white.withOpacity(0.38), disabledBackgroundColor: Colors.white.withOpacity(0.12),
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(50)),
         ),

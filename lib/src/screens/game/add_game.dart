@@ -256,7 +256,7 @@ class _AddGameScreenState extends State<AddGameScreen> {
                                               padding: const EdgeInsets.symmetric(horizontal: 4.0),
                                               child: Row(
                                                 children: [
-                                                  Text(widget.score == null ? (yourGames.length - i).toString() : (i+1).toString(),
+                                                  Text((i+1).toString(),
                                                       style: Theme.of(context).textTheme.caption),
                                                 ],
                                               ),

@@ -164,7 +164,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 style: ElevatedButton.styleFrom(
-                  primary: NetenColor.buttonColor,
+                  backgroundColor: NetenColor.buttonColor,
                   shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(50)),
                   ),
@@ -220,7 +220,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                     style: ElevatedButton.styleFrom(
-                      primary: NetenColor.buttonColor,
+                      backgroundColor: NetenColor.buttonColor,
                       shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(50)),
                       ),
@@ -247,7 +247,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                     style: ElevatedButton.styleFrom(
-                      primary: NetenColor.buttonColor,
+                      backgroundColor: NetenColor.buttonColor,
                       shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(50)),
                       ),
