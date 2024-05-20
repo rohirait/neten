@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:netten/src/models/friend.dart';
@@ -9,6 +8,7 @@ import 'package:netten/src/providers/auth_provider.dart';
 import 'package:netten/src/providers/client_provider.dart';
 import 'package:netten/src/providers/friends_provider.dart';
 import 'package:netten/src/screens/friends/add_friend.dart';
+import 'package:netten/src/widgets/avatar_widget.dart';
 import 'package:netten/theme.dart';
 
 class FriendsList extends ConsumerWidget {
@@ -27,7 +27,7 @@ class FriendsList extends ConsumerWidget {
                 children: [
                   FriendRequestWidget(),
                   for (Friend friend in friends) ...[
-                    FriendCard(friend: friend, user: ref.watch(authenticationProvider).getUser()!),
+                    FriendCard(friend: friend, user: ref.watch(authenticationProvider).getUser()!, ref: ref),
                     SizedBox(height: 8)
                   ]
                 ],
@@ -43,8 +43,8 @@ class FriendsList extends ConsumerWidget {
 class FriendCard extends StatelessWidget {
   final Friend friend;
   final User user;
-
-  const FriendCard({Key? key, required this.friend, required this.user}) : super(key: key);
+  final WidgetRef ref;
+  const FriendCard({Key? key, required this.friend, required this.user, required this.ref}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -104,11 +104,29 @@ class FriendCard extends StatelessWidget {
               ),
               child: Padding(
                 padding: const EdgeInsets.all(24.0),
-                child: Center(child: Text(friend.name, style: Theme.of(context).textTheme.bodyText1)),
+                child: Row(
+                  children: [
+                    if(friend.uid != '')
+                      getAvatar(friend.email),
+                    Center(child: Text(friend.name, style: Theme.of(context).textTheme.bodyLarge)),
+                  ],
+                ),
               )),
         ),
       ),
     );
+  }
+
+  Widget getAvatar(String email) {
+    return FutureBuilder<String?>(future: getUserAvatarUrl(email), builder: (context, snap){
+      if (snap.data != null)
+        return Padding(
+          padding: const EdgeInsets.only(right: 8.0),
+          child: FriendAvatarWidget( url: snap.data!),
+        );
+      else
+        return SizedBox.shrink();
+    });
   }
 }
 
@@ -146,10 +164,10 @@ class FriendRequestCard extends ConsumerWidget {
                     child: Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
                       Text(
                         request.senderName.isNotEmpty ? request.senderName : request.email,
-                        style: Theme.of(context).textTheme.bodyText1,
+                        style: Theme.of(context).textTheme.bodyLarge,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      if (request.senderName.isNotEmpty) Text(request.email, style: Theme.of(context).textTheme.bodyText2)
+                      if (request.senderName.isNotEmpty) Text(request.email, style: Theme.of(context).textTheme.bodyMedium)
                     ]),
                   ),
                   ElevatedButton(
@@ -187,6 +205,7 @@ class FriendRequestCard extends ConsumerWidget {
                                         if (name.isEmpty) {
                                           return 'Name cannot be empty';
                                         }
+                                        return null;
                                       },
                                     ),
                                     actionsAlignment: MainAxisAlignment.center,

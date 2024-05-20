@@ -134,6 +134,9 @@ class Authentication {
       if (documentSnapshot.exists) {
         FirebaseFirestore.instance.collection('users').doc(user.uid).update(
           {'lastLogin': DateTime.now(),
+            if(firstName != null) 'firstName':firstName,
+            if(lastName != null) 'lastName':lastName,
+            if(firstName != null && lastName != null) 'displayName':firstName+' '+lastName
           },
         );
         FirebaseFirestore.instance.collection('users').doc(user.uid).collection('myFriends');
@@ -147,7 +150,8 @@ class Authentication {
             'uid': user.uid,
             'created': DateTime.now(),
             if(firstName != null) 'firstName': firstName,
-            if(lastName != null) 'lastName': lastName
+            if(lastName != null) 'lastName': lastName,
+            if(firstName != null && lastName != null) 'displayName':firstName+' '+lastName
 
           },
         ).then((_) {

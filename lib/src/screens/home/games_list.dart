@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:netten/src/providers/auth_provider.dart';
+import 'package:netten/src/providers/friends_provider.dart';
 import 'package:netten/src/providers/score_provider.dart';
 
 import 'package:netten/src/models/score.dart';
 import 'package:netten/src/screens/game/add_game.dart';
+import 'package:netten/src/widgets/avatar_widget.dart';
 
 import 'package:netten/theme.dart';
 import 'package:netten/src/models/score_request.dart';
@@ -117,22 +119,40 @@ class ScoreView extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
-                        Text(
-                          score.opponent,
-                          style: Theme.of(context).textTheme.bodyText1,
-                          overflow: TextOverflow.ellipsis,
+                        Row(
+                          children: [
+                            if(score.opponentEmail.isNotEmpty)
+                              getAvatar(score.opponentEmail),
+                            Text(
+                              score.opponent,
+                              style: Theme.of(context).textTheme.bodyLarge,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
                         ),
-                        Text(score.date, style: Theme.of(context).textTheme.bodyText2)
+                        Text(score.date, style: Theme.of(context).textTheme.bodyMedium)
                       ]),
                     ),
                     Text(score.yourScore.toString() + " : " + score.opponentScore.toString(),
-                        style: Theme.of(context).textTheme.bodyText1?.copyWith(fontSize: 39))
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontSize: 39))
                   ],
                 ),
               )),
         ),
       ),
     );
+  }
+
+  Widget getAvatar(String email) {
+    return FutureBuilder<String?>(future: getUserAvatarUrl(email), builder: (context, snap){
+      if (snap.data != null)
+        return Padding(
+          padding: const EdgeInsets.only(right: 8.0),
+          child: FriendAvatarWidget( url: snap.data!),
+        );
+      else
+        return SizedBox.shrink();
+    });
   }
 }
 
@@ -179,10 +199,10 @@ class ScoreRequestView extends ConsumerWidget {
                   child: Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
                     Text(
                       score.opponentName ?? score.opponentEmail,
-                      style: Theme.of(context).textTheme.bodyText1,
+                      style: Theme.of(context).textTheme.bodyLarge,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    Text(score.date, style: Theme.of(context).textTheme.bodyText2)
+                    Text(score.date, style: Theme.of(context).textTheme.bodyMedium)
                   ]),
                 ),
                 Column(
@@ -190,7 +210,7 @@ class ScoreRequestView extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(score.yourScore.toString() + " : " + score.opponentScore.toString(),
-                        style: Theme.of(context).textTheme.bodyText1?.copyWith(fontSize: 39)),
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontSize: 39)),
                     Row(
                       children: [
                         ElevatedButton(

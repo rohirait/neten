@@ -10,7 +10,6 @@ import 'package:netten/src/screens/home/games_list.dart';
 import '../../../theme.dart';
 import '../../models/client.dart';
 import '../../models/friend.dart';
-import '../../providers/auth_provider.dart';
 import '../../widgets/gradient_text.dart';
 
 class AddFriendScreen extends StatefulWidget {
@@ -55,7 +54,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
                         child: Text('Add friend',
-                            style: Theme.of(context).textTheme.bodyText1?.copyWith(color: Colors.white)),
+                            style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white)),
                       ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: NetenColor.buttonColor,
@@ -78,7 +77,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
               SizedBox(height: 20),
               Center(
                   child: GradientText("NeteN",
-                      style: Theme.of(context).textTheme.headline2,
+                      style: Theme.of(context).textTheme.displayMedium,
                       gradient: LinearGradient(colors: [NetenColor.primaryColor, NetenColor.secondaryColor]))),
               SizedBox(height: 40),
               Card(

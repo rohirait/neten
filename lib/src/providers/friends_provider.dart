@@ -170,6 +170,20 @@ Future<bool> checkIfUserExists(String userEmail) async {
   }
 }
 
+Future<String?>? getUserAvatarUrl(String email) async{
+  try {
+    var snapshot = await FirebaseFirestore.instance.collection('users').where('email', isEqualTo: email).get();
+    print("test 2");
+    if(snapshot.docs.first.data()['url'] != null)
+      return snapshot.docs.first.data()['url'];
+    return null;
+
+  } catch (e) {
+    print("Error checking user existence: $e");
+    return null;
+  }
+}
+
 Future<void> addUserToEmailCollection(String email) async {
   try {
     await FirebaseFirestore.instance.collection('usersToEmail').add({'email': email});

@@ -55,7 +55,7 @@ class BasicDataScreenState extends State<BasicDataScreen> {
             Center(
               child: GradientText(
                 "NeteN",
-                style: Theme.of(context).textTheme.headline2,
+                style: Theme.of(context).textTheme.displayMedium,
                 gradient: LinearGradient(colors: [NetenColor.primaryColor, NetenColor.secondaryColor]),
               ),
             ),

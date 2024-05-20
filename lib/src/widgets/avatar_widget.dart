@@ -29,3 +29,32 @@ class AvatarWidget extends ConsumerWidget {
     );
   }
 }
+
+class FriendAvatarWidget extends StatelessWidget{
+   FriendAvatarWidget({Key? key, required this.url}) : super(key: key);
+  final String url;
+  final List<String> acceptedAvatarUrls = [
+    'avatar1.jpg',
+    'avatar2.jpg',
+    'avatar3.jpg',
+    'avatar4.jpg',
+    'avatar5.jpg',
+    'avatar6.jpg',
+    'avatar7.jpg',
+    'avatar8.jpg',
+    'avatar9.jpg',
+    'avatar10.jpg'
+  ];
+
+
+
+  @override
+  Widget build(BuildContext context) {
+    return CircleAvatar(
+      backgroundImage:!acceptedAvatarUrls.contains(url)
+          ? NetworkImage(url)
+          : AssetImage('assets/img/' + (url)) as ImageProvider<Object>,
+      radius: 15,
+    );
+  }
+}

@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 
-import 'firebase_convertable.dart';
 
 class Score {
   int opponentScore;
@@ -35,7 +34,7 @@ class Score {
         uid = data?['uid'] ?? '',
         opponent = data?['opponent'] ?? '',
         date = data?['date'] != null ? readTimestamp(data!['date'].toDate()) : '',
-        opponentEmail = data?['opponent_email'] ?? '',
+        opponentEmail = data?['opponentEmail'] ?? '',
         friendId = data?['friendId'],
         mySets = List.castFrom(data?['my_sets'] as List? ?? []),
         opponentSets = List.castFrom(data?['opponent_sets']  as List? ?? []),

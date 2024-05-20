@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:logger/logger.dart';
 import 'package:netten/src/services/firestore_database.dart';
 import 'package:riverpod/riverpod.dart';
 

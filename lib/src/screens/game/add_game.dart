@@ -61,10 +61,10 @@ class _AddGameScreenState extends State<AddGameScreen> {
                   SizedBox(height: 20),
                   Center(
                       child: GradientText("NeteN",
-                          style: Theme.of(context).textTheme.headline2,
+                          style: Theme.of(context).textTheme.displayMedium,
                           gradient: LinearGradient(colors: [NetenColor.primaryColor, NetenColor.secondaryColor]))),
                   SizedBox(height: 8),
-                  Text(widget.score != null ? 'Game' : 'Add game', style: Theme.of(context).textTheme.bodyText1),
+                  Text(widget.score != null ? 'Game' : 'Add game', style: Theme.of(context).textTheme.bodyLarge),
                   SizedBox(height: 15),
                   Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                     Flexible(
@@ -82,7 +82,7 @@ class _AddGameScreenState extends State<AddGameScreen> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(DateFormat('dd.MM.yyyy').format(selectedDate),
-                                      style: Theme.of(context).textTheme.subtitle1),
+                                      style: Theme.of(context).textTheme.titleMedium),
                                   Icon(Icons.arrow_drop_down)
                                 ],
                               ),
@@ -164,7 +164,7 @@ class _AddGameScreenState extends State<AddGameScreen> {
                           children: [
                             if (widget.score == null)
                               Row(children: [
-                                SizedBox(width: 50, child: Text('YOU', style: Theme.of(context).textTheme.subtitle1)),
+                                SizedBox(width: 50, child: Text('YOU', style: Theme.of(context).textTheme.titleMedium)),
                                 SizedBox(width: 14),
                                 Container(
                                     height: 55,
@@ -177,7 +177,7 @@ class _AddGameScreenState extends State<AddGameScreen> {
                                       padding: const EdgeInsets.all(8.0),
                                       child: TextField(
                                           controller: yourScoreController,
-                                          style: Theme.of(context).textTheme.bodyText1?.copyWith(fontSize: 26),
+                                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontSize: 26),
                                           decoration: InputDecoration(
                                             border: InputBorder.none,
                                           ),
@@ -194,13 +194,13 @@ class _AddGameScreenState extends State<AddGameScreen> {
                                 children: [
                                   SizedBox(width: 90),
                                   Text((opponentGames.length + 1).toString(),
-                                      style: Theme.of(context).textTheme.caption)
+                                      style: Theme.of(context).textTheme.bodySmall)
                                 ],
                               ),
                             SizedBox(height: 8),
                             if (widget.score == null)
                               Row(children: [
-                                SizedBox(width: 50, child: Text('OPP.', style: Theme.of(context).textTheme.subtitle1)),
+                                SizedBox(width: 50, child: Text('OPP.', style: Theme.of(context).textTheme.titleMedium)),
                                 SizedBox(width: 14),
                                 Container(
                                     height: 55,
@@ -211,7 +211,7 @@ class _AddGameScreenState extends State<AddGameScreen> {
                                       padding: const EdgeInsets.all(8.0),
                                       child: TextField(
                                           controller: opponentScoreController,
-                                          style: Theme.of(context).textTheme.bodyText1?.copyWith(fontSize: 26),
+                                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontSize: 26),
                                           decoration: InputDecoration(
                                             border: InputBorder.none,
                                           ),
@@ -247,7 +247,7 @@ class _AddGameScreenState extends State<AddGameScreen> {
                                             padding: const EdgeInsets.only(top: 8.0),
                                             child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
                                               Text(yourGames[i].toString(),
-                                                  style: Theme.of(context).textTheme.bodyText1),
+                                                  style: Theme.of(context).textTheme.bodyLarge),
                                             ]),
                                           ),
                                           SizedBox(height: 14),
@@ -257,7 +257,7 @@ class _AddGameScreenState extends State<AddGameScreen> {
                                               child: Row(
                                                 children: [
                                                   Text(widget.score == null ? (yourGames.length - i).toString() : (i+1).toString(),
-                                                      style: Theme.of(context).textTheme.caption),
+                                                      style: Theme.of(context).textTheme.bodySmall),
                                                 ],
                                               ),
                                             ),
@@ -266,7 +266,7 @@ class _AddGameScreenState extends State<AddGameScreen> {
                                             padding: const EdgeInsets.only(top: 12.0),
                                             child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
                                               Text(opponentGames[i].toString(),
-                                                  style: Theme.of(context).textTheme.bodyText1),
+                                                  style: Theme.of(context).textTheme.bodyLarge),
                                             ]),
                                           ),
                                           SizedBox(height: 24),
@@ -290,7 +290,7 @@ class _AddGameScreenState extends State<AddGameScreen> {
                         style: Theme.of(context)
                             .elevatedButtonTheme
                             .style
-                            ?.copyWith(backgroundColor: MaterialStateProperty.all(Colors.white)),
+                            ?.copyWith(backgroundColor: WidgetStateProperty.all(Colors.white)),
                         onPressed: () {
                           if (yourScoreController.text.isNotEmpty && opponentScoreController.text.isNotEmpty) {
                             yourGames.add(int.parse(yourScoreController.text));
@@ -309,7 +309,7 @@ class _AddGameScreenState extends State<AddGameScreen> {
                         child: Padding(
                           padding: const EdgeInsets.symmetric(vertical: 8.0),
                           child: Text('Add set',
-                              style: Theme.of(context).textTheme.bodyText1?.copyWith(color: NetenColor.primaryColor)),
+                              style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: NetenColor.primaryColor)),
                         ),
                       ),
                     ),
@@ -324,7 +324,7 @@ class _AddGameScreenState extends State<AddGameScreen> {
                             child: Padding(
                               padding: const EdgeInsets.symmetric(vertical: 8.0),
                               child: Text('Save match',
-                                  style: Theme.of(context).textTheme.bodyText1?.copyWith(color: Colors.white)),
+                                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white)),
                             ),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: NetenColor.buttonColor,

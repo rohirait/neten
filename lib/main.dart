@@ -7,7 +7,6 @@ import 'package:netten/src/screens/home/home_screen.dart';
 import 'package:netten/src/screens/onboarding/basic_data_screen.dart';
 import 'package:netten/src/screens/onboarding/sign_in.dart';
 import 'package:netten/src/services/shared_preference_service.dart';
-import 'package:netten/src/widgets/gradient_text.dart';
 import 'package:netten/theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:netten/src/providers/auth_provider.dart';
 
-import 'package:netten/theme.dart';
 
 
 //todo add colors to theme, work with button themes
@@ -18,7 +17,7 @@ class SignIn extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text('NeteN', style: Theme.of(context).textTheme.headline1),
+              Text('NeteN', style: Theme.of(context).textTheme.displayLarge),
               SizedBox(height: 55),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 46.0),
@@ -29,7 +28,7 @@ class SignIn extends ConsumerWidget {
                         ), backgroundColor: Colors.white,
                         shadowColor: Colors.black,
                         elevation: 4,
-                        textStyle: Theme.of(context).textTheme.bodyText2?.copyWith(color: Colors.black)),
+                        textStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.black)),
                     onPressed: () async {
                       ref
                           .watch(authenticationProvider)
@@ -67,11 +66,10 @@ class SignIn extends ConsumerWidget {
                       style: ElevatedButton.styleFrom(
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8.0),
-                          ),
+                          ), backgroundColor: Colors.white,
                           shadowColor: Colors.black,
-                          primary: Colors.white,
                           elevation: 4,
-                          textStyle: Theme.of(context).textTheme.bodyText2?.copyWith(color: Colors.black)),
+                          textStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.black)),
                       onPressed: () async {
                         ref
                             .watch(authenticationProvider)

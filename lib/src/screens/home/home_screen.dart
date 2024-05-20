@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:netten/src/providers/auth_provider.dart';
@@ -33,7 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
             SizedBox(height: 20),
             Center(
                 child: GradientText("NeteN",
-                    style: Theme.of(context).textTheme.headline2,
+                    style: Theme.of(context).textTheme.displayMedium,
                     gradient: LinearGradient(colors: [NetenColor.primaryColor, NetenColor.secondaryColor]))),
             ...getBody(_selectedIndex),
             SizedBox(height: 8),
@@ -96,7 +95,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   LimitedBox(
                     maxWidth: 250,
                     child: Text("Welcome " + (client?.fullName?.capitalizeFirstLetterOfWords() ?? ref.read(authenticationProvider).getUser()?.displayName ?? ''),
-                        style: Theme.of(context).textTheme.bodyText1),
+                        style: Theme.of(context).textTheme.bodyLarge),
                   ),
                   Align(
                     alignment: Alignment.topRight,
@@ -123,14 +122,14 @@ class _HomeScreenState extends State<HomeScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 15.0),
           child: Row(
             children: [
-              Text('Games', style: Theme.of(context).textTheme.bodyText1),
+              Text('Games', style: Theme.of(context).textTheme.bodyLarge),
               Spacer(),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
                   'YOU    OPP.',
                   textAlign: TextAlign.end,
-                  style: Theme.of(context).textTheme.bodyText2,
+                  style: Theme.of(context).textTheme.bodyMedium,
                 ),
               ),
             ],
@@ -160,11 +159,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   padding: const EdgeInsets.all(15.0),
                   child: Text(
                     index == 2 ? 'Add friend' : 'Add game',
-                    style: Theme.of(context).textTheme.bodyText1?.copyWith(color: Colors.white),
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white),
                   ),
                 ),
                 style: ElevatedButton.styleFrom(
-                  primary: NetenColor.buttonColor,
+                  backgroundColor: NetenColor.buttonColor,
                   shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(50)),
                   ),
@@ -216,11 +215,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Padding(
                       padding: const EdgeInsets.all(15.0),
                       child: Text('Add manually',
-                        style: Theme.of(context).textTheme.bodyText1?.copyWith(color: Colors.white),
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white),
                       ),
                     ),
                     style: ElevatedButton.styleFrom(
-                      primary: NetenColor.buttonColor,
+                      backgroundColor: NetenColor.buttonColor,
                       shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(50)),
                       ),
@@ -243,11 +242,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Padding(
                       padding: const EdgeInsets.all(15.0),
                       child: Text('Search for friend',
-                        style: Theme.of(context).textTheme.bodyText1?.copyWith(color: Colors.white),
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white),
                       ),
                     ),
                     style: ElevatedButton.styleFrom(
-                      primary: NetenColor.buttonColor,
+                      backgroundColor: NetenColor.buttonColor,
                       shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(50)),
                       ),

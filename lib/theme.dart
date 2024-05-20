@@ -4,18 +4,19 @@ final ThemeData NetenTheme = ThemeData(
     textTheme: _mainTextTheme,
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        onPrimary: Colors.white,
-        onSurface: Colors.white,
-        primary: Colors.white,
+        foregroundColor: Colors.white,
+        backgroundColor: Colors.white,
+        disabledForegroundColor: Colors.white.withOpacity(0.38),
+        disabledBackgroundColor: Colors.white.withOpacity(0.12),
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(50)),
         ),
       ),
     ),
     scrollbarTheme: ScrollbarThemeData().copyWith(
-      thickness: MaterialStateProperty.all(15),
+      thickness: WidgetStateProperty.all(15),
       radius: Radius.circular(50),
-      thumbColor: MaterialStateProperty.all(NetenColor.scrollBarColor),
+      thumbColor: WidgetStateProperty.all(NetenColor.scrollBarColor),
     ));
 
 class NetenColor extends Color {
@@ -35,7 +36,7 @@ class NetenColor extends Color {
 }
 
 TextTheme _mainTextTheme = const TextTheme(
-  headline1: TextStyle(
+  displayLarge: TextStyle(
       fontSize: 56,
       letterSpacing: 0.5,
       height: 1.5,
@@ -44,23 +45,23 @@ TextTheme _mainTextTheme = const TextTheme(
       color: NetenColor.whiteText
       //color: RendinColor.highEmphasisHeadlineTextColor
       ),
-  headline2: TextStyle(
+  displayMedium: TextStyle(
       fontSize: 44,
       letterSpacing: 0,
       height: 1.5,
       fontFamily: 'DaysOne',
       fontWeight: FontWeight.bold,
       color: NetenColor.primaryColor),
-  headline3: TextStyle(
+  displaySmall: TextStyle(
       fontSize: 24,
       letterSpacing: 0,
       height: 1.5,
       fontFamily: 'DaysOne',
       fontWeight: FontWeight.w500,
       color: NetenColor.primaryColor),
-  headline4:
+  headlineMedium:
       TextStyle(fontSize: 20, letterSpacing: 0.15, height: 1.5, fontFamily: 'Inter', fontWeight: FontWeight.w500),
-  headline5: TextStyle(
+  headlineSmall: TextStyle(
     fontSize: 20,
     letterSpacing: 0.25,
     height: 1.5,
@@ -68,43 +69,43 @@ TextTheme _mainTextTheme = const TextTheme(
     fontWeight: FontWeight.w500,
     //color: RendinColor.highEmphasisHeadlineTextColor
   ),
-  headline6: TextStyle(
+  titleLarge: TextStyle(
       //color: RendinColor.highEmphasisHeadlineTextColor,
       fontWeight: FontWeight.w500,
       fontSize: 18,
       letterSpacing: 0.25,
       height: 1.5),
-  subtitle1:
+  titleMedium:
       TextStyle(fontSize: 16, letterSpacing: 0.25, height: 1.2, fontFamily: 'Inter', fontWeight: FontWeight.normal),
-  bodyText1: TextStyle(
+  bodyLarge: TextStyle(
       fontSize: 27,
       letterSpacing: 0.25,
       height: 1.5,
       fontFamily: 'Inter',
       fontWeight: FontWeight.w700,
       color: NetenColor.blackText),
-  bodyText2: TextStyle(
+  bodyMedium: TextStyle(
       fontSize: 17,
       letterSpacing: 0.15,
       height: 1.5,
       fontFamily: 'Inter',
       fontWeight: FontWeight.w700,
       color: NetenColor.greyText),
-  button: TextStyle(
+  labelLarge: TextStyle(
     fontSize: 14,
     letterSpacing: 0.15,
     height: 1.5,
     fontFamily: 'Inter',
     fontWeight: FontWeight.w500,
   ),
-  caption: TextStyle(
+  bodySmall: TextStyle(
     fontSize: 12,
     letterSpacing: 0.4,
     height: 1.2,
     fontFamily: 'Inter',
     fontWeight: FontWeight.normal,
   ),
-  overline: TextStyle(
+  labelSmall: TextStyle(
     fontSize: 12,
     letterSpacing: 2,
     height: 1.5,
