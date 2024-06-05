@@ -123,10 +123,12 @@ class ScoreView extends StatelessWidget {
                           children: [
                             if(score.opponentEmail.isNotEmpty)
                               getAvatar(score.opponentEmail),
-                            Text(
-                              score.opponent,
-                              style: Theme.of(context).textTheme.bodyLarge,
-                              overflow: TextOverflow.ellipsis,
+                            Expanded(
+                              child: Text(
+                                score.opponent,
+                                style: Theme.of(context).textTheme.bodyLarge,
+                                maxLines: 2,
+                              ),
                             ),
                           ],
                         ),
